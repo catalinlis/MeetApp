@@ -1,0 +1,79 @@
+<app-navbar></app-navbar>
+<div class="chat-header">
+    Your chats
+</div>
+<div class="chat-members">
+    @for(chatUser of chatUsers; track chatUser){
+        <div class="chat-member" [ngClass]="{'selected' : this.selectedUser && chatUser.username == this.selectedUser.username}" (click)="redirectedToChat(chatUser)">
+            <div class="chat-member-picture">
+                <img [src]="this.urlMap.get(chatUser.username) || 'assets/images/user.png'" alt="">
+                <div *ngIf="this.onlineStatusMark.get(chatUser.username)" class="icon-online"></div>
+                <div *ngIf="!this.onlineStatusMark.get(chatUser.username)" class="icon-offline"></div>
+            </div>
+            <span>{{chatUser.firstname}} {{chatUser.lastname}}
+                <div class="message-counter text-center" *ngIf="chatMessagesMap.get(chatUser.username)">{{chatMessagesMap.get(chatUser.username)}}</div>
+            </span>
+        </div>
+    }
+</div>
+<div class="no-conversations text-center" *ngIf="!selectedUser && fetchedChatUsers">
+    <img src="/assets/images/conversation.png" height="140px" alt=""><br/>
+    Start your conversations
+</div>
+<div class="messages-block" #messagesBlock *ngIf="isUserSelected" (scroll)="checkScrollTop()">
+    <div *ngIf="spinFlag" class="spinner"></div>
+    <div class="no-messages text-center" *ngIf="messages.length === 0 && spinFlag === false">
+        <div class="icon">
+            <fa-icon [icon]="faEnvelope" class="me-2"></fa-icon>
+        </div><br/>No messages yet
+    </div>
+    @for(message of messages; track $index){
+        @if($index > 0){
+            @if(isDifferenceTimeBigger(message.sentDate, messages[$index-1].sentDate, 1800)) {
+                @if(isToday(message.sentDate)){
+                    <div class="sent-date text-center">{{fromDateToHHMM(message.sentDate)}}</div>
+                }
+                @else{
+                    <div class="sent-date text-center">{{fromDateToDDMMYYYY(message.sentDate)}}, {{fromDateToHHMM(message.sentDate)}}</div>
+                }
+            }
+        } 
+        @else{
+            @if(isToday(message.sentDate)){
+                <div class="sent-date text-center">{{fromDateToHHMM(message.sentDate)}}</div>
+            }
+            @else{
+                <div class="sent-date text-center">{{fromDateToDDMMYYYY(message.sentDate)}}, {{fromDateToHHMM(message.sentDate)}}</div>
+            }
+        }
+        <div class="message-layout-right" *ngIf="message.sender === currentUsername">
+            <div class="sender">{{message.message}}</div>
+        </div>
+        <div class="message-layout-left" *ngIf="message.sender !== currentUsername">
+            <img *ngIf="$index === 0 || messages[$index-1].sender !== message.sender" [src]="this.urlMap.get(message.sender)" alt="">
+            <div class="receiver">{{message.message}}</div>
+        </div>
+    }
+</div>
+<div class="write-message-block" *ngIf="isUserSelected">
+    <form (ngSubmit)="sendMessage()" #form="ngForm">
+        <textarea (keydown.enter)="submitOnEnter($event, form)" [(ngModel)]="message" name="message" placeholder="Write message..."></textarea>
+        <button type="submit">Send</button>
+    </form>
+</div>
+
+<div class="friends">
+    <div class="header text-center">
+        Friends
+    </div>
+    @for(friend of Friends; track friend){
+        <div class="user" (click)="redirectedToChat(friend)">
+            <div class="friend-picture">
+                <img [src]="this.urlMap.get(friend.username) || 'assets/images/user.png'" alt="">
+                <div *ngIf="this.onlineStatusMark.get(friend.username)" class="icon-online"></div>
+                <div *ngIf="!this.onlineStatusMark.get(friend.username)" class="icon-offline"></div>
+            </div>
+            <span class="username">{{friend.firstname}} {{friend.lastname}}</span>
+        </div>
+    }
+</div>

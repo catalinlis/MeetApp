@@ -1,0 +1,99 @@
+.content{
+    margin-top: 6vh;
+    position: relative;
+}
+
+.choose-interest-layout{
+    margin-top: 20px;
+    margin-bottom: 20px; 
+}
+
+.choose-interest-layout h1{
+    font-family: 'Roboto';
+    font-size: 2rem;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.choose-interest-layout p{
+    max-width: 500px;
+    width: fit-content;
+    height: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: solid 1px rgb(200,200,200);
+    background-color: white;
+    border-radius: 10px;
+    margin: auto;
+    margin-bottom: 20px;
+    font-family: 'Roboto';
+    font-size: 12pt;
+    color: rgb(150,150,150);
+    justify-content:center;
+}
+
+.choose-interest-layout img{
+    margin-top: 20px;
+    width: 50px;
+    height: 50px;
+}
+
+
+.choose-interest-layout input[type="checkbox"] {
+    display: none;
+}
+
+.choose-interest-layout input[type="checkbox"] + .interest-button{
+    width: fit-content;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: solid 2px #7030C1;
+    background-color: white;
+    color: #7030C1;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-family: 'Roboto';
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+
+.choose-interest-layout input[type="checkbox"]:checked + .interest-button{
+    background-color: #7030C1;
+    color: white;
+}
+
+.choose-interest-layout .submit-button{
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #276DC3;
+    font-family: 'Roboto';
+    font-size: 14pt;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    display: block;
+    margin: auto;
+    margin-top: 40px;
+}
+
+.skip-button{
+    display: block;
+    margin: auto;
+    margin-top: 10px;
+    text-decoration: underline;
+    background-color: white;
+    border: none;
+    font-family: 'Roboto';
+    font-size: 12pt;
+    color: #1A85F0;
+}

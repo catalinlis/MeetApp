@@ -1,0 +1,37 @@
+<app-navbar></app-navbar>
+<div class="container">
+    <div class="row h-100">
+        <div class="col-10 mx-auto">
+            <div class="wall" *ngIf="interestData !== null" style="background-image: url({{images[interestData!.interestKey]}})">
+            </div>
+            <div class="header">
+                <div class="category">{{interestData?.interestName}}</div>
+                <button *ngIf="this.subscribed === true" class="subscribe" disabled><fa-icon [icon]="faCheck"></fa-icon> Subscribed</button>
+                <button *ngIf="this.subscribed === false" class="subscribe" (click)="addUserInterest()"><fa-icon [icon]="faPlus"></fa-icon> Subscribe</button>
+            </div>
+            <div class="interest-content">
+                <div class="menu">
+                    <button *ngFor="let button of buttons; let i = index"
+                        (click)="selectTab(this.buttons[i])"
+                        [class.active]="selectedTab === this.buttons[i]">{{this.buttons[i]}}</button>
+                </div>
+                <div class="tab-content">
+                    <div *ngIf="loading" class="loading">Loading...</div>
+                    <div *ngIf="error" class="error">{{ error }}</div>
+                    <div *ngIf="!loading && !error" class="success">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-2 text-center">
+
+                                </div>
+                                <div class="col-10 content">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+.profile-navigation{
+    position:fixed;
+    height: auto;
+    width: 220px;
+    margin-top: 15px;
+    border: solid 1px rgb(200,200,200);
+    background-color: white;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 10px;
+}
+
+.profile-navigation p{
+    margin: 3px;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-right: 15px;
+    padding-left: 15px;
+    background-color: aqua;
+    font-size: 1rem;
+    font-family: 'Arial';
+    border-radius: 5px;
+    background-color: white;
+}
+
+.profile-navigation p:hover{
+    background-color: rgb(230,230,230);
+    transition-duration: .7s;
+}
+
+.profile-picture{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.profile-picture img{
+    display: block;
+    max-width:150px;
+    max-height:150px;
+    object-fit: cover;
+    width: 100%;
+    height: 150px;
+}

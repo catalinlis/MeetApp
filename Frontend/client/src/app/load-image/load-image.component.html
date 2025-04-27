@@ -1,0 +1,22 @@
+<app-navbar></app-navbar>
+<div class="container">
+    <div class="row">
+        <div class="col content text-center">
+            <div class="load-image-layout">
+                <h1>Hey Catalin,</h1>
+                <div class="info">
+                    <p><fa-icon [icon]="faImage" class="me-2"></fa-icon> Here you have to upload your profile photo</p>
+                </div>
+                <div class="photo">
+                    <img [src]="previewUrl || '/assets/images/user.png'" alt="">
+                </div>
+                <form (submit)="onSubmit($event)">
+                    <input type="file" (change)="onFileSelected($event)" id="image" accept="image/*">
+                    <label for="image" class="upload-image"><fa-icon [icon]="faPlus" class="me-2"></fa-icon>Upload image</label>
+                    <button type="submit" class="next-step">Next step&nbsp;&nbsp;&nbsp;<fa-icon [icon]="faArrowRight" class="me-2"></fa-icon></button>
+                </form>
+                <button class="skip-button">Skip for now</button>
+            </div>
+        </div>
+    </div>
+</div>

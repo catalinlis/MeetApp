@@ -1,0 +1,24 @@
+<app-navbar></app-navbar>
+<div class="container">
+    <div class="row">
+        <div class="col-6 mx-auto content text-center">
+            <div class="choose-interest-layout">
+                <img src="assets/images/needs.png" alt="">
+                <h1>Choose your interest</h1>
+                <p style="text-align: left;">Choose your interests that describes you the best and 
+                                            make connection with people based on common things</p>
+          
+                @for (interest of this.interestsData; track interest.interestKey){
+                    <input type="checkbox" [id]="interest.interestKey" 
+                                           [name]="interest.interestKey" 
+                                           [value]="interest.interestKey"
+                                           [(ngModel)]="interest.checked">
+                    <label [for]="interest.interestKey" class="interest-button"><fa-icon [icon]="faPlus" class="me-2"></fa-icon>{{interest.interestName}}</label>
+                }
+                <button class="submit-button" (click)="this.getCheckedInterests()">Next step</button>
+            
+                <button class="skip-button">Skip for now</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+<form [formGroup]="registerForm" (ngSubmit)="register()" class="mx-auto" style="width: 85%;">
+    <div class="container">
+        <div class="form-input row g-2">
+            <div class="col-md-6 col-md-pull-6">
+                <app-text-input [formControl]="$any(registerForm.controls['firstname'])"
+                            [label]="'Firstname'">
+                </app-text-input>
+            </div>
+        
+            <div class="col-md-6 col-md-pull-6">
+                <app-text-input [formControl]="$any(registerForm.controls['lastname'])"
+                            [label]="'Lastname'">
+                </app-text-input>
+            </div>
+        </div>
+        <div class="form-input row mt-2">
+            <app-text-input [formControl]="$any(registerForm.controls['username'])"
+                        [label]="'Username'">
+            </app-text-input>
+        </div>
+        <div class="form-input row mt-2">
+            <app-text-input [formControl]="$any(registerForm.controls['email'])"
+                        [label]="'E-mail'">
+            </app-text-input>
+        </div>
+        <div class="form-input row mt-3">
+            <p class="ms-1">Birthday<fa-icon [icon]="questionMark" class="ms-1"></fa-icon></p>
+        </div>
+        <div class="form-input row">
+            <app-date-picker
+                [formControl]="$any(registerForm.controls['dateOfBirthday'])"
+                [label]="'Date of Birth'"
+                [maxDate]="maxDate">
+            </app-date-picker>
+        </div>
+        <div class="form-input row mt-2">
+            <app-text-input
+                [formControl]="$any(registerForm.controls['country'])"
+                [label]="'Country'">
+            </app-text-input>
+        </div>
+        <div class="form-input row mt-2">
+            <app-text-input
+                [formControl]="$any(registerForm.controls['city'])"
+                [label]="'City'">
+            </app-text-input>
+        </div>
+        <div class="form-input row mt-3">
+            <p class="ms-1">Gender<fa-icon [icon]="questionMark" class="ms-1"></fa-icon></p>
+        </div>
+        <div class="form-input row mt-0 mx-auto">
+            <div class="col-6 g-0">
+                <input type="radio" name="gender" formControlName="gender" id="male" value="male">
+                <label class="label-radio" style="border-radius: 5px 0 0 5px;" for="male">Male</label>
+            </div>
+            <div class="col-6 g-0">
+                <input type="radio" name="gender" formControlName="gender" id="female" value="female">
+                <label class="label-radio" style="border-radius: 0 5px 5px 0;" for="female">Female</label>
+            </div>
+        </div>
+        <div class="form-input row mt-3">
+            <app-text-input
+                [formControl]="$any(registerForm.controls['password'])"
+                [type]="'password'"
+                [label]="'Password'">
+            </app-text-input>
+        </div>
+        <div class="form-input row mt-2">
+            <app-text-input
+                [formControl]="$any(registerForm.controls['repeatpassword'])"
+                [type]="'password'"
+                [label]="'Repeat Password'">
+            </app-text-input>
+        </div>
+        <div class="form-input row mt-3 m-0 mb-3">
+            <input type="submit" class="btn btn-success p-2" value="Register">
+        </div>
+    </div>
+</form>

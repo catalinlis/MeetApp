@@ -1,0 +1,11 @@
+<div class="profile-navigation">
+    <div class="profile-picture mx-auto">
+        <img width="150" height="150" [src]="this.imageUrl ? this.imageUrl : 'assets/images/user.png'" style="background-size:auto 100%;" class="profile-picture"  alt="">
+    </div>
+    <h1 class="text-center m-4">{{this.currentUser?.firstname}} {{this.currentUser?.lastname}}</h1>
+    <hr>
+    <p><fa-icon [icon]="faAddressCard" class="me-2"></fa-icon>About</p>
+    <p><fa-icon [icon]="faUserFriends" class="me-2"></fa-icon>Friends</p>
+    <p><fa-icon [icon]="faEnvelope" class="me-2"></fa-icon>Messages</p>
+    <p><fa-icon [icon]="faCog" class="me-2"></fa-icon>Settings</p>
+</div>

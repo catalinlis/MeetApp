@@ -1,0 +1,14 @@
+.attribute{
+    font-family: 'Roboto';
+    font-size: 14pt;
+    color: rgb(120,120,120);
+    padding-top: 5px;
+}
+
+.value{
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 16pt;
+    color: rgb(50, 50,50);
+    
+}

@@ -1,0 +1,25 @@
+<div class="card mb-4" style="height: 240px; cursor: pointer;">
+    <div class="card-img-wrapper">
+        <img   [src]="imageUrl || './assets/images/user.png'" class="card-img-top">
+        <ul class="list-inline member-icons animate text-center">
+            <li class="list-inline-item">
+                <button class="btn btn-primary" (click)="redirectProfile()">
+                    <i class="fa fa-user"></i>
+                </button>
+            </li>
+            <li class="list-inline-item">
+                <button class="btn btn-primary">
+                    <i class="fa fa-envelope"></i>
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body p-1">
+        <h2 class="card-title text-center mb-1">
+            {{member.firstname}} {{member.lastname}}
+        </h2>
+        <p class="card-text text-muted text-center">
+            {{member.city}}, {{member.country}}
+        </p>
+    </div>
+</div>

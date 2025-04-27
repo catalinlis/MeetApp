@@ -1,0 +1,16 @@
+<p class="attribute">Firstname</p>
+<p class="value">{{this.aboutMember.firstname}}</p>
+<p class="attribute">Lastname</p>
+<p class="value">{{this.aboutMember.lastname}}</p>
+<p class="attribute">Gender</p>
+<p class="value">
+<fa-icon *ngIf="aboutMember.gender === 'Male'" [icon]="Genders.Male" class="me-2"></fa-icon>
+<fa-icon *ngIf="aboutMember.gender === 'Female'" [icon]="Genders.Female" class="me-2"></fa-icon>{{this.aboutMember.gender}}</p>
+<p class="attribute">E-mail</p>
+<p class="value"><fa-icon [icon]="faMailBulk" class="me-2"></fa-icon>{{this.aboutMember.email}}</p>
+<p class="attribute">Country</p>
+<p class="value">{{this.aboutMember.country}}</p>
+<p class="attribute">City</p>
+<p class="value">{{this.aboutMember.city}}</p>
+<p class="attribute">Date of Birth</p>
+<p class="value"><fa-icon [icon]="faBirthdayCake" class="me-2"></fa-icon>{{this.BirthDay}}</p>

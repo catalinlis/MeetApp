@@ -1,0 +1,9 @@
+<div class="container">
+    <div class="row g-4">
+        <div class="col-4 text-center" *ngFor="let interest of interests">
+            <div class="card" [routerLink]="'/interests/' + interest.interestKey" [ngStyle]="{'background-image': 'url(' + images[interest.interestKey] + ')'}">
+                <div class="interest">{{interest.interestName}}</div>
+            </div>
+        </div>
+    </div>
+</div>

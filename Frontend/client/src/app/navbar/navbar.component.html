@@ -1,0 +1,32 @@
+
+
+<nav class="navbar navbar-expand-md fixed-top">
+  <div class="container">
+        <a routerLink="/" routerLinkActive="active" class="navbar-brand app-name" href="#">MeetApp</a>
+        @if(this.accountService.currentUser() !== null){
+        
+          @if(this.accountService.currentUser()?.registerStep == 3){
+            <ul class="navbar-nav me-auto mb-md-0">
+              <li class="nav-item ms-2">
+                <input type="text" placeholder="Cauta..." autocomplete="off">
+              </li>
+              <li class="nav-item ms-4">  
+                <a href="/community" routerLinkActive="active" class="nav-link">Community</a>
+              </li>
+              <li class="nav-item ms-2">  
+                <a href="/interests" routerLinkActive="active" class="nav-link">Interests</a>
+              </li>
+            </ul>
+            <div class="notifications">
+              <a><img src="/assets/images/notification.png" height="25px" alt=""></a>
+            </div>
+            <div class="messanger">
+              <a href="messages"><img src="/assets/images/chat.png" height="25px"></a>
+            </div>
+          }
+          <div class="logout" style="margin-right: 0px;">
+            <button (click)="logout()"><img src="/assets/images/exit.png" alt="">Logout</button>
+          </div>
+      }
+  </div>
+</nav>

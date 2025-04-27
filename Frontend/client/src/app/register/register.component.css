@@ -1,0 +1,14 @@
+
+.form-container{
+    margin: 0 auto;
+    background-color: rgba(255,255,255,0.8);
+    border-radius: 7px;
+    backdrop-filter: blur(5px);
+    border: solid 1px rgb(200,200,200);
+    width: 85%
+}
+
+p{
+    font-size: 14pt;
+    color: rgb(120, 120, 120);
+}

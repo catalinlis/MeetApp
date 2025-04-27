@@ -1,0 +1,15 @@
+
+.form-floating > label{
+    font-family: 'Arial';
+    color: rgb(100, 100, 100);
+    font-weight: 400;
+    font-size: 17px;
+    padding-top: 18px;
+    margin: auto;
+}
+
+.form-floating > input{
+    font-family: 'Arial';
+    font-weight: 600;
+    color: rgb(70, 70, 70);
+}

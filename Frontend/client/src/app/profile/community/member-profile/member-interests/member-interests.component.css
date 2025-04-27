@@ -1,0 +1,21 @@
+.card{
+    height:110px;
+    display: grid;
+    place-items: center;
+    background-size: cover;
+    background-position: center;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.interest{
+    width: auto;
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 15pt;
+    color: white;
+    padding: 10px;
+    background-color: rgba(10,10,10,0.5);
+    border-radius: 10px;
+}

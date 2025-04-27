@@ -1,0 +1,39 @@
+.content{
+    position: relative;
+    margin-left: calc(50% - 350px);
+    width: 755px;
+    top: 65px;
+}
+
+.members{
+    margin-top: 0px;
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 5px;
+    font-family: 'Roboto';
+    font-size: 14pt;
+}
+
+.members-header{
+    margin-bottom: 20px;
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    background: rgb(9,202,204);
+    background: linear-gradient(270deg, rgba(9,202,204,1) 9%, rgba(209,45,253,1) 100%);
+}
+
+.members-header h1{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-family: 'Roboto';
+    font-size: 17pt;
+    color: white;
+}
+
+.profile-identity{
+    position: fixed;
+    margin-top: 65px;
+    margin-left: calc(50% - 600px);
+}

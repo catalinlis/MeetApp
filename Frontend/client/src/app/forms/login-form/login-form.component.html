@@ -1,0 +1,16 @@
+<form [formGroup]="loginForm" (ngSubmit)="login()" #form="ngForm" class="form-box w-75 mx-auto" autocomplete="off">
+    <div class="form-input row">
+        <app-text-input [formControl]="$any(loginForm.controls['username'])" 
+                        [label]="'Username'">
+        </app-text-input>
+    </div>
+    <div class="form-input row mt-2">
+        <app-text-input [formControl]="$any(loginForm.controls['password'])"
+                        [label]="'Password'"
+                        [type]="'password'">
+        </app-text-input>
+    </div>
+    <div class="form-input row mt-2 me-1 ms-1">
+      <button type="submit" class="btn btn-primary mx-auto">Log in</button>
+    </div>
+</form>

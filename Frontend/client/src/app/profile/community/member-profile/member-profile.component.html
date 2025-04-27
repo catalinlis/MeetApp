@@ -1,0 +1,72 @@
+<app-navbar></app-navbar>
+<div class="container h-100">
+    <div class="row h-100">
+        <div class="col-10 mx-auto" >
+            <div class="wall"></div>
+            <div class="member-primary-info">
+                <div class="member-image">
+                    <img [src]="this.imageUrl || './assets/images/user.png'" alt="">
+                </div>
+                <div class="info">
+                    <p class="name">{{member.firstname}} {{member.lastname}}</p>
+                    <p class="location">{{member.city}}, {{member.country}}</p>
+                </div>
+                <div class="friends-button">
+                    <button *ngIf="this.friends === false && this.friendRequestSent === false && this.friendRequestReceived === false" class="add-friend" (click)="sendFriendRequest()">
+                        <p>
+                            <fa-icon [icon]="faAdd"></fa-icon>
+                            <fa-icon [icon]="faUserFriend"></fa-icon>
+                            Add Friend
+                        </p>
+                    </button>
+                    <button *ngIf="this.friends === true" class="friends" disabled>
+                        <p>
+                            <fa-icon [icon]="faCheck"></fa-icon>
+                            <fa-icon [icon]="faUserFriend"></fa-icon>
+                            Friends
+                        </p>
+                    </button>
+                    <button *ngIf="this.friendRequestSent && this.friends === false" class="friend-request" disabled>
+                        <p>
+                            <fa-icon [icon]="faUserFriend" class=""></fa-icon>
+                            Request Sent
+                        </p>
+                    </button>
+                    <button *ngIf="this.friendRequestReceived && this.friends === false" class="friend-request" (click)="answerFriendRequest()">
+                        <p>
+                            <fa-icon [icon]="faUserFriend" class=""></fa-icon>
+                            Accept Request
+                        </p>
+                    </button>
+                </div>
+            </div>
+            <div class="profile-content">   
+                <div class="menu">
+                    <button
+                        *ngFor="let button of buttons; let i = index"
+                        (click)="selectTab(this.buttons[i])"
+                        [class.active]="selectedTab === this.buttons[i]"
+                        >
+                    {{this.buttons[i]}}
+                    </button>
+                </div>
+                <div class="tab-content">
+                    <div *ngIf="loading" class="loading">Loading...</div>
+                    <div *ngIf="error" class="error">{{ error }}</div>
+                    <div *ngIf="!loading && !error" class="success">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-2 text-center"><h1>{{this.selectedTab}}</h1></div>
+                                <div class="col-10 content">
+                                    <app-member-about *ngIf="this.selectedTab === 'About'" [aboutMember]="this.aboutMember"></app-member-about>
+                                    <app-member-interests *ngIf="this.selectedTab === 'Interests'" [interests]="interests"></app-member-interests>
+                                    <app-member-friends *ngIf="this.selectedTab === 'Friends'" [username]="this.member.username"></app-member-friends>
+                                </div>            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

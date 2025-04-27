@@ -1,0 +1,25 @@
+<app-navbar></app-navbar>
+<div class="profile-identity">
+    <app-profile-identity></app-profile-identity>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="post text-center">
+                No posts yet
+            </div>
+        </div>
+    </div>
+</div>
+<div class="online-users">
+    <div class="header text-center">Online friends</div>
+    @for(user of onlineMembers; track user){
+        <div class="user" (click)="redirectToChat(user)">
+            <div class="online-user-picture">
+                <img [src]="this.urlMap.get(user.username) || 'assets/images/user.png'" alt="">
+                <div class="icon"></div>
+            </div>
+            <span class="username">{{user.firstname}} {{user.lastname}}</span>
+        </div>
+    }
+</div>

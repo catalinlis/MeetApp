@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    image: backend:latest
+    ports:
+      - "5100:5100"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  frontend:
+    image: frontend:latest
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend 

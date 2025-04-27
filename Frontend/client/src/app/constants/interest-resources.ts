@@ -1,0 +1,23 @@
+export const images: {[key: string]: string} = {
+    "bussiness": "/assets/images/business.jpg",
+    "design": "/assets/images/design.jpg",
+    "cooking": "/assets/images/cooking.jpg",
+    "programming": "/assets/images/programming.jpg",
+    "sport": "/assets/images/sport.jpg",
+    "medicine": "/assets/images/medicine.jpg",
+    "technology": "/assets/images/technology.jpg",
+    "gaming": "/assets/images/gaming.jpg",
+    "computer-science": "/assets/images/computer_science.jpg",
+    "health-and-beauty": "/assets/images/health_and_beauty.jpg",
+    "music": "/assets/images/music.jpg",
+    "nutrition": "/assets/images/nutrition.jpg",
+    "chemistry": "/assets/images/chemistry.jpg",
+    "fashion": "/assets/images/fashion.jpg",
+    "law": "/assets/images/law.jpg",
+    "architecture": "/assets/images/architecture.jpg",
+    "lecture": "/assets/images/lecture.jpg",
+    "animals": "/assets/images/animals.jpg",
+    "dancing": "/assets/images/dancing.jpg",
+    "religion": "/assets/images/religion.jpg",
+    "astronomy": "/assets/images/astronomy.jpg"
+  }; 

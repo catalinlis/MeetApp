@@ -1,0 +1,23 @@
+<app-navbar></app-navbar>
+<div class="profile-identity">
+    <app-profile-identity></app-profile-identity>
+</div>
+<div class="container content">
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <div class="members">
+                <div class="members-header text-center">
+                    <h1>Here you can discover our community of members</h1>
+                </div>
+                <div class="row">
+                @for(member of members; track member.username){
+                    <div class="col-3" style="height: 290px;">
+                        <app-member-card [member]="member">
+                        </app-member-card>
+                    </div>
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

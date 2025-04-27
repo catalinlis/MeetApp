@@ -1,0 +1,45 @@
+# Ignore build output directories (common in .NET projects)
+Backend/API/bin/*
+Backend/API/obj/*
+Backend/API/.env
+
+# Compiled output
+/Frontend/client/dist
+/Frontend/client/tmp
+/Frontend/client/out-tsc
+/Frontend/client/bazel-out
+
+# Node
+/Frontend/client/node_modules
+/Frontend/client/npm-debug.log
+/Frontend/client/yarn-error.log
+
+# IDEs and editors
+/Frontend/client/.idea/
+/Frontend/client/.project
+/Frontend/client/.classpath
+/Frontend/client/.c9/
+/Frontend/client/*.launch
+/Frontend/client/.settings/
+/Frontend/client/*.sublime-workspace
+
+# Visual Studio Code
+/Frontend/client/.vscode/*
+/Frontend/client/!.vscode/settings.json
+/Frontend/client/!.vscode/tasks.json
+/Frontend/client/!.vscode/launch.json
+/Frontend/client/!.vscode/extensions.json
+/Frontend/client/.history/*
+
+# Miscellaneous
+/Frontend/client/.angular/cache
+/Frontend/client/.sass-cache/
+/Frontend/client/connect.lock
+/Frontend/client/coverage
+/Frontend/client/libpeerconnection.log
+/Frontend/client/testem.log
+/Frontend/client/typings
+
+# System files
+/Frontend/client/.DS_Store
+/Frontend/client/Thumbs.db

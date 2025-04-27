@@ -1,0 +1,126 @@
+.navbar{
+    background-color: rgba(140,140,250);
+    width: auto;
+    position: fixed;
+    color: white;
+    height: 65px;
+}
+
+.app-name{
+    vertical-align: middle;
+    color: white;
+    font-size: 1.7rem;
+}
+
+
+.exit{
+    width: 12vh;
+    height: 4vh;
+    background-color: aqua;
+}
+
+.navbar .logout img{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: -2px;
+}
+
+
+.navbar .logout button{
+    background-color: transparent;
+    border: transparent;
+    color: white;
+    background-color: rgba(140,140,250);
+    border: solid 2px rgba(140,140,250);
+    width: 120px;
+    height: 40px;
+    border-radius: 15px;
+    font-family: 'Roboto';
+    font-size: 13pt;
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+
+.navbar .logout button:hover{
+    background-color: #9a75f2;
+    border: solid 2px rgb(255,255,255);
+    transition: .2s;
+}
+
+
+.navbar li input[type="text"]{
+    border: solid 1px #A2A2FA;
+    width: 150px;
+    background-color: #A2A2FA;
+    border-radius: 15px;
+    padding-left: 10px;
+    color:white;
+    font-family: 'Roboto';
+    font-size: 13pt;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 2px;
+}
+
+.navbar li input[type="text"]:focus{
+    outline:none!important;
+}
+
+.navbar li input[type="text"]::placeholder{
+    color: rgb(230,230,230);
+}
+
+.navbar li a{
+    color: white;
+    font-family: 'Roboto';
+    font-size: 14pt;
+    background-color: rgba(140,140,250);
+    border-radius: 20px;
+    padding-right: 15px;
+    padding-left: 15px;
+    cursor: pointer;
+}
+
+.navbar li a:hover{
+    background-color: #9a75f2;
+    transition: .2s;
+
+}
+
+.messanger{
+    margin-right: 10px;
+    height: 45px;
+    font-family: 'Roboto';
+    font-size: 16pt;
+    padding:10px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: solid 2px rgba(140,140,250);
+}
+
+.messanger:hover{
+    background-color: #9a75f2;
+    border: solid 2px rgb(255,255,255);
+    transition: .2s;
+}
+
+.notifications{
+    margin-right: 10px;
+    height: 45px;
+    font-family: 'Roboto';
+    font-size: 16pt;
+    padding:10px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: solid 2px rgba(140,140,250);
+}
+
+.notifications:hover{
+    background-color: #9a75f2;
+    border: solid 2px rgb(255,255,255);
+    transition: .2s;
+}
+
+
