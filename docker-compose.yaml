@@ -3,14 +3,32 @@ version: '3.8'
 services:
   backend:
     image: backend:latest
+    networks:
+      - app-network
     ports:
       - "5100:5100"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - REDIS_CONNECTION=redis:6379
+    depends_on:
+      - redis
 
   frontend:
     image: frontend:latest
+    networks:
+      - app-network
     ports:
       - "4200:4200"
     depends_on:
-      - backend 
+      - backend
+
+  redis:
+    image: redis
+    networks:
+      - app-network
+    ports:
+      - "6379:6379"
+
+networks:
+  app-network:
+    driver: bridge 

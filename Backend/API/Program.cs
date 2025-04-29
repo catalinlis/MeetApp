@@ -34,7 +34,7 @@ builder.Services.AddDbContext<DataContext>(options => {
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(envs["REDIS_HOST"])
+    ConnectionMultiplexer.Connect(envs["REDIS_CONNECTION"])
 );
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -98,7 +98,8 @@ builder.Services.AddAuthentication(options => {
 
 var app = builder.Build();
 
-app.UseCors(x => x.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+# TODO: Add env variable for CORS policy
+app.UseCors(x => x.WithOrigins(envs["CORS_POLICY"]).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 
 app.UseHttpsRedirection();
 
