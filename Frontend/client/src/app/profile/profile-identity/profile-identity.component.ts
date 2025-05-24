@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAddressCard, faCog, faEnvelope, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { AccountService } from '../../_services/account.service';
@@ -11,7 +11,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './profile-identity.component.html',
   styleUrl: './profile-identity.component.css'
 })
-export class ProfileIdentityComponent {
+export class ProfileIdentityComponent implements OnInit{
   faEnvelope = faEnvelope;
   faUserFriends = faUserFriends;
   faAddressCard = faAddressCard;

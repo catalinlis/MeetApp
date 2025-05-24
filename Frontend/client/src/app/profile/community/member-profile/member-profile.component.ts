@@ -150,8 +150,9 @@ export class MemberProfileComponent implements OnInit{
   }
 
   isFriendRequestReceived(){
-    this.friendsService.isFriendRequestReceived(this.currentUser, this.member.username).subscribe({
+    this.friendsService.isFriendRequestReceived(this.member.username, this.currentUser).subscribe({
       next: (response) => {
+        console.log(response);
         this.friendRequestReceived = response.friendRequest;
       },
       error: (err) => console.log(err.error)

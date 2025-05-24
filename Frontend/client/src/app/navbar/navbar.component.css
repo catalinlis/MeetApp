@@ -4,6 +4,7 @@
     position: fixed;
     color: white;
     height: 65px;
+    z-index: 1000;
 }
 
 .app-name{

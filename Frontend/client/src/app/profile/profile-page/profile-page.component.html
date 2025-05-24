@@ -1,16 +1,9 @@
+<div class="content">
 <app-navbar></app-navbar>
 <div class="profile-identity">
     <app-profile-identity></app-profile-identity>
 </div>
-<div class="content">
-    <div class="row">
-        <div class="col-12">
-            <div class="post text-center">
-                No posts yet
-            </div>
-        </div>
-    </div>
-</div>
+<app-feed></app-feed>
 <div class="online-users">
     <div class="header text-center">Online friends</div>
     @for(user of onlineMembers; track user){
@@ -22,4 +15,5 @@
             <span class="username">{{user.firstname}} {{user.lastname}}</span>
         </div>
     }
+</div>
 </div>

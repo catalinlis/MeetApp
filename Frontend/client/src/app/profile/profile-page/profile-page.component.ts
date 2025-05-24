@@ -7,19 +7,17 @@ import { MembersService } from '../../_services/members.service';
 import { Member } from '../../_models/Member';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AccountService } from '../../_services/account.service';
-import { forkJoin } from 'rxjs';
-import { images } from '../../constants/interest-resources';
 import { Router } from '@angular/router';
+import { FeedComponent } from "../feed/feed.component";
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [NavbarComponent, FontAwesomeModule, ProfileIdentityComponent],
+  imports: [NavbarComponent, FontAwesomeModule, ProfileIdentityComponent, FeedComponent],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
 })
 export class ProfilePageComponent implements OnInit{
-  //private onlineUsersService = inject(OnlineUsersService);
   private memberService = inject(MembersService);
   private accountService = inject(AccountService);
   private router = inject(Router);
