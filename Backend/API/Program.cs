@@ -98,7 +98,7 @@ builder.Services.AddAuthentication(options => {
 
 var app = builder.Build();
 
-# TODO: Add env variable for CORS policy
+// TODO: Add env variable for CORS policy
 app.UseCors(x => x.WithOrigins(envs["CORS_POLICY"]).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 
 app.UseHttpsRedirection();
