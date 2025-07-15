@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{76A50763-1561-4481-9B39-604C51D8E204}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetApp.DataEntities", "MeetApp.DataEntities\MeetApp.DataEntities.csproj", "{4814693B-20B2-4219-BD74-840EE8B6FB67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationQueue.Services", "NotificationQueue.Services\NotificationQueue.Services.csproj", "{28978DA8-69CC-4631-9344-58D3305EB7A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76A50763-1561-4481-9B39-604C51D8E204}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76A50763-1561-4481-9B39-604C51D8E204}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76A50763-1561-4481-9B39-604C51D8E204}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76A50763-1561-4481-9B39-604C51D8E204}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4814693B-20B2-4219-BD74-840EE8B6FB67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4814693B-20B2-4219-BD74-840EE8B6FB67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4814693B-20B2-4219-BD74-840EE8B6FB67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4814693B-20B2-4219-BD74-840EE8B6FB67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28978DA8-69CC-4631-9344-58D3305EB7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28978DA8-69CC-4631-9344-58D3305EB7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28978DA8-69CC-4631-9344-58D3305EB7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28978DA8-69CC-4631-9344-58D3305EB7A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
