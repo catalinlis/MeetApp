@@ -6,10 +6,11 @@
                     <img *ngIf="friend.imageLoaded" [src]="friend.safeImageUrl || '/assets/images/user.png'" alt="">
                     <div *ngIf="!friend.imageLoaded" class="spinner"></div>
                 </div>
-                <button class="member-redirection" (click)="redirectProfile(friend.username)">
-                    {{friend.firstname}} {{friend.lastname}}
-                </button>
+                <a [href]="'/community/' + friend.username" class="member-redirection">{{friend.firstname}} {{friend.lastname}}</a>
             </div>
         </div>
     </div>
+</div>
+<div class="no-friends" *ngIf="friends.length === 0 && loaded">
+    No friends yet
 </div>

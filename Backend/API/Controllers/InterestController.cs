@@ -1,6 +1,6 @@
-using API.Data;
-using API.DTOs;
-using API.Entities;
+using MeetApp.DataEntities.Data;
+using MeetApp.DataEntities.DTOs;
+using MeetApp.DataEntities.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

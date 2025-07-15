@@ -14,6 +14,7 @@
                 #autosize="cdkTextareaAutosize" 
                 cdkAutosizeMinRows="2"
                 cdkAutosizeMaxRows="3" 
+                [(ngModel)]="textareaContent"
                 placeholder="What's on your mind?"></textarea>
     </mat-dialog-content>
     <div class="photo text-center" *ngIf="previewUrl !== null">
@@ -24,5 +25,5 @@
       <label for="image" class="add-photo text-center"><img src="assets/images/photos-icon.png" width="25px" height="25px"> Add Photo</label>
     </form>
     <hr>
-    <button class="post-button checked" [disabled]="previewUrl === null">Post</button>
+    <button class="post-button checked" (click)="onPost($event)" [disabled]="previewUrl === null">Post</button>
 </div>

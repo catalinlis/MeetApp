@@ -1,0 +1,397 @@
+.close-button{
+    text-align: center;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background-color: white;
+    color: rgb(100,100,100);
+    font-size: 18pt;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.close-button:hover{
+    color: rgb(40,40,40);
+}
+
+.header{
+    width: 100%;
+    border-bottom: solid 1px rgb(200,200,200);
+    text-align: center;
+    font-family: 'Roboto';
+    font-size: 17pt;
+    font-weight: 500;
+    padding: 18px;
+}
+
+.post{
+    position: absolute;
+    top: 57px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 57px);
+    overflow: auto;
+}
+
+.post:hover{
+    scrollbar-width: auto;
+}
+
+.post::-webkit-scrollbar{
+    width: 8px;
+    opacity: 0;
+}
+
+.post::-webkit-scrollbar-track{
+    background: transparent;
+}
+
+.post::-webkit-scrollbar-thumb{
+    background:rgba(0,0,0,.2);
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.post::-webkit-scrollbar-thumb:hover{
+    background:rgba(0,0,0,.4);
+}
+
+.post .top-post{
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+}
+
+.profile-pic {
+    margin-left: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.profile-pic img{
+    max-width:50px;
+    max-height:50px;
+    object-fit: cover;
+    width: 100%;
+    height: 50px;
+}
+
+.user-header{
+    display: inline-block;
+    width: auto;
+    margin-top: 5px;
+    margin-left: 20px;
+    margin-right: auto;
+}
+
+.user-header .name{
+    text-decoration: none;
+    cursor: pointer;
+    color: black;
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 12pt;
+}
+
+.user-header .name:hover{
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+}
+
+.user-header .time{
+    color: rgb(100, 100, 100);
+    font-family: 'Roboto';
+    font-size: 10pt;
+}
+
+.interests{
+    display: inline-block;
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: 20px;
+    width: 410px;
+    height: 40px;
+    text-align: right;
+}
+
+.interests .interest{
+    display: inline-block;
+    width: auto;
+    height: auto;
+    font-family: 'Roboto';
+    font-size: 10pt;
+    color: rgb(130, 130, 130);
+    margin-left: 10px;
+    background-color: rgb(230,230,230);
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 7px;
+    padding-right: 7px;
+    border-radius: 5px;
+    border: none;
+    text-decoration: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.interests .interest:hover{
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+}
+
+.post .description{
+    margin-top: 60px;
+    width: 100%;
+    height: auto;
+    font-family: 'Roboto';
+    font-size: 14pt;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: justify;
+}
+
+.post .img-container{
+    margin-top: 25px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: solid 1px rgb(230,230,230);
+    border-bottom: solid 1px rgb(230,230,230);
+}
+
+.img-container .responsive-img{
+    max-width: 100%;
+    max-height: 600px;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.post-likes-comments{
+    margin-top: 10px;
+    width: 100%;
+    height: 25px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-likes-comments .likes{
+    display: inline-block;
+    width: auto;
+    height: 25px;
+    margin-left: 20px;
+    color: rgb(100,100,100)
+}
+
+.post-likes-comments .comments{
+    display: inline-block;
+    width: auto;
+    height: 25px;
+    margin-right: 20px;
+    margin-left: auto;
+    color: rgb(100,100,100);
+}
+
+.post-like-comment-buttons{
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border-top: solid 1px rgb(230,230,230);
+    border-bottom: solid 1px rgb(230,230,230);
+    margin-top: 10px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-like-comment-buttons button{
+    width: 100%;
+    height: 35px;
+    border: none;
+    background-color: white;
+    font-family: 'Roboto';
+    font-size: 12pt;
+    border-radius: 5px;
+}
+
+.post-like-comment-buttons button:hover{
+    background-color: rgb(240,240,240);
+}
+
+.isLiked{
+    color: #1565C0;
+}
+
+.notLiked{
+    color: rgb(156, 156, 156);
+}
+
+.comments-area{
+    margin-top: 10px;
+    width: calc(100% - 40px);
+    margin-left: 20px;
+    height: auto;
+}
+
+.comments-area .comment-item{
+    width: auto;
+    height: auto;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment-item img{
+    display: inline-block;
+    max-width:40px;
+    max-height:40px;
+    object-fit: cover;
+    width: 100%;
+    height: 40px;
+    border-radius: 50%;
+    top: 0px;
+}
+
+.comment-item .text{
+    display: inline-block;
+    width: auto;
+    height: auto;
+    margin-left: 10px;
+    margin-right: auto;
+    background-color: rgb(240,240,240);
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 7px;
+}
+
+.comment-text-name{
+    font-family: 'Roboto';
+    font-size: 11pt;
+    font-weight: 500;
+    color: black;
+    text-decoration: none;
+}
+
+.comment-text-name:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.comment-text-content{
+    height: auto;
+    margin-top: 2px;
+    margin-bottom: 6px;
+    font-family: 'Roboto';
+    font-size: 11pt;
+    white-space: pre-line;
+}
+
+.comments-area .time{
+    margin-top: -10px;
+    font-family: 'Roboto';
+    font-size: 8pt;
+    font-weight: 500;
+    color: rgb(100,100,100);
+    padding-left: 60px;
+    margin-bottom: 5px;
+}
+
+.comments-area .no-comments{
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    text-align: center;
+    font-family: 'Roboto';
+    font-size: 16pt;
+    font-weight: 500;
+    color: rgb(130, 130, 130);
+}
+
+.comments-textarea{
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    background-color: white;
+    border-top: solid 1px rgb(200,200,200);
+    display: flex;
+    justify-content: space-between;
+}
+
+.comments-textarea .profile-photo{
+    display: inline-block;
+    max-width:40px;
+    max-height:40px;
+    object-fit: cover;
+    width: 100%;
+    height: 40px;
+    border-radius: 50%;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+.comments-textarea textarea{
+    display: inline-block;
+    outline: none;
+    resize: none;
+    border: none;
+    border-radius: 10px;
+    background-color: rgb(240,240,240);
+    padding: 10px;
+    font-family: 'Roboto';
+    font-size: 11pt;
+    width: calc(100% - 90px);
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right: 20px;
+    padding-right: 33px;
+}
+
+.comments-textarea button{
+    position: absolute;
+    top: 17px;
+    right: 30px;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+}
+
+.comments-textarea button:hover:not(:disabled){
+   background-color: rgb(220,220,220);
+}
+
+.comments-textarea textarea:focus{
+    outline: solid 1px rgb(150,150,150);
+}
+
+.comments-textarea textarea::-webkit-scrollbar{
+    width: 8px;
+    opacity: 0;
+}
+
+.comments-textarea textarea::-webkit-scrollbar-track{
+    background: transparent;
+}
+
+.comments-textarea textarea::-webkit-scrollbar-thumb{
+    background:rgba(0,0,0,.2);
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.comments-textarea textarea::-webkit-scrollbar-thumb:hover{
+    background:rgba(0,0,0,.4);
+}

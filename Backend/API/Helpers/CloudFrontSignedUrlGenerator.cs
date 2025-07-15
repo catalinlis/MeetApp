@@ -1,8 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using Amazon.CloudFront;
-using Amazon.CloudFront.Model;
-using Microsoft.AspNetCore.Diagnostics;
 
 namespace API.Helpers;
 

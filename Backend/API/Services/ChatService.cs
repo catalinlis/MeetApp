@@ -2,9 +2,10 @@ using System.Net;
 using System.Text.Json;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using API.Data;
-using API.DTOs;
-using API.Entities;
+using MeetApp.DataEntities.Data;
+using MeetApp.DataEntities.DTOs;
+using MeetApp.DataEntities.Entities;
+using MeetApp.DataEntities.Entities.ManyToMany;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Document = Amazon.DynamoDBv2.DocumentModel.Document;
@@ -141,8 +142,6 @@ public class ChatService(IAmazonDynamoDB dynamoDbContext,
                     { ":true", new AttributeValue { BOOL = true } }
                 }
             };
-
-            Console.WriteLine(request);
 
             await dynamoDbContext.UpdateItemAsync(request);
         }

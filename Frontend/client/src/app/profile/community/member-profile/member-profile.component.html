@@ -1,18 +1,18 @@
-<app-navbar></app-navbar>
 <div class="container h-100">
     <div class="row h-100">
         <div class="col-10 mx-auto" >
             <div class="wall"></div>
             <div class="member-primary-info">
                 <div class="member-image">
-                    <img [src]="this.imageUrl || './assets/images/user.png'" alt="">
+                    <app-loader Cwidth="250" Cheight="250" [circle]="true" *ngIf="!photoLoaded"></app-loader>
+                    <img [src]="this.profilePhoto || './assets/images/user.png'" alt="" *ngIf="photoLoaded">
                 </div>
                 <div class="info">
                     <p class="name">{{member.firstname}} {{member.lastname}}</p>
                     <p class="location">{{member.city}}, {{member.country}}</p>
                 </div>
-                <div class="friends-button">
-                    <button *ngIf="this.friends === false && this.friendRequestSent === false && this.friendRequestReceived === false" class="add-friend" (click)="sendFriendRequest()">
+                <div class="friends-button" *ngIf="currentUser?.userName !== member.username">
+                    <button *ngIf="this.friends === false && this.friendRequestSent === false && this.friendRequestReceived === false" class="add-friend" (click)="sendFriendRequest(currentUser!.userName, member.username)">
                         <p>
                             <fa-icon [icon]="faAdd"></fa-icon>
                             <fa-icon [icon]="faUserFriend"></fa-icon>
@@ -32,7 +32,7 @@
                             Request Sent
                         </p>
                     </button>
-                    <button *ngIf="this.friendRequestReceived && this.friends === false" class="friend-request" (click)="answerFriendRequest()">
+                    <button *ngIf="this.friendRequestReceived && this.friends === false" class="friend-request" (click)="answerFriendRequest(currentUser!.userName, member.username)">
                         <p>
                             <fa-icon [icon]="faUserFriend" class=""></fa-icon>
                             Accept Request
@@ -51,16 +51,22 @@
                     </button>
                 </div>
                 <div class="tab-content">
-                    <div *ngIf="loading" class="loading">Loading...</div>
-                    <div *ngIf="error" class="error">{{ error }}</div>
-                    <div *ngIf="!loading && !error" class="success">
+                    <div class="success">
                         <div class="container">
                             <div class="row">
                                 <div class="col-2 text-center"><h1>{{this.selectedTab}}</h1></div>
                                 <div class="col-10 content">
-                                    <app-member-about *ngIf="this.selectedTab === 'About'" [aboutMember]="this.aboutMember"></app-member-about>
-                                    <app-member-interests *ngIf="this.selectedTab === 'Interests'" [interests]="interests"></app-member-interests>
-                                    <app-member-friends *ngIf="this.selectedTab === 'Friends'" [username]="this.member.username"></app-member-friends>
+                                    <app-member-about *ngIf="this.selectedTab === 'About'" [member]="this.member"></app-member-about>
+                                    <app-member-interests *ngIf="this.selectedTab === 'Interests'" [member]="this.member"></app-member-interests>
+                                    <app-member-friends *ngIf="this.selectedTab === 'Friends'" [user]="this.member"></app-member-friends>
+                                    <app-member-photos *ngIf="this.selectedTab === 'Photos'" [member]="this.member" 
+                                                                                             [profilePhoto]="profilePhoto"
+                                                                                             [currentProfilePhoto]="currentProfilePhoto">
+                                    </app-member-photos>
+                                    <app-member-posts *ngIf="this.selectedTab === 'Posts'" [member]="this.member" 
+                                                                                           [profilePhoto]="profilePhoto"
+                                                                                           [currentProfilePhoto]="currentProfilePhoto">
+                                    </app-member-posts>
                                 </div>            
                             </div>
                         </div>

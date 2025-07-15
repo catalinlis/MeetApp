@@ -1,0 +1,145 @@
+.notification-panel {
+  width: 300px;
+  height: auto;
+  max-height: auto;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  background-color: white;
+  font-family: Arial, sans-serif;
+  position: fixed; 
+  top: 60px; 
+  right: 100px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.panel-header {
+  width: 100%;
+  border-bottom: solid 1px rgb(230,230,230);
+}
+
+.panel-header button{
+  font-family: 'Roboto';
+  font-size: 18pt;
+  font-weight: 500;
+  text-decoration: none;
+  background-color: white;
+  border: none;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-header button:hover{
+  background-color: rgb(230,230,230);
+}
+
+.no-notifications{
+  text-align: center;
+  font-family: 'Roboto';
+  font-size: 12pt;
+  font-weight: 500;
+  padding: 10px;
+  padding-top: 15px;
+}
+
+.profile-pic{
+  margin-top: 10px;
+  margin-left: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.profile-pic img{
+  max-width:50px;
+  max-height:50px;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 50%;
+  height: 50px;
+}
+
+.notification-items{
+  overflow-y: auto;
+  max-height: 500px;
+  margin-top: 5px;
+}
+
+.notification-items::-webkit-scrollbar{
+    width: 8px;
+    opacity: 0;
+
+}
+
+.notification-items::-webkit-scrollbar-track{
+    background: transparent;
+}
+
+.notification-items::-webkit-scrollbar-thumb{
+    background:rgba(0,0,0,.2);
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.notification-items::-webkit-scrollbar-thumb:hover{
+    background:rgba(0,0,0,.4);
+}
+
+.notification-item{
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  width: auto;
+  height: 75px;
+  border-radius: 5px;
+  display: flex;
+  cursor: pointer;
+}
+
+.notification-item:hover{
+  background-color: rgb(245,245,245);
+  transition-duration: .3s;
+}
+
+
+
+
+.content .header{
+  margin-top: 10px;
+  margin-left: 10px;
+  font-family: 'Roboto';
+  font-weight: 500;
+  font-size: 12pt;
+}
+
+.content .message{
+  margin-left: 10px;
+  font-family: 'Roboto';
+  font-size: 11pt;
+}
+
+.content .time{
+  margin-left: 10px;
+  font-family: 'Roboto';
+  font-weight: 500;
+  color: rgb(150,150,150);
+  font-size: 8pt;
+  color: rgb(50,100,250);
+}
+
+.notification-item .circle{
+  display: inline-block;
+  margin-right: 15px;
+  margin-left: auto;
+  margin-top: 27px;
+  justify-content: center;
+  color: rgb(50,100,250);
+  font-size: 10pt;
+}

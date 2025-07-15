@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Interest } from '../../_models/Interest';
 import { InterestService } from '../../_services/interest.service';
+import { PostingService } from '../../_services/posting.service';
 
 @Component({
   selector: 'app-write-post',
@@ -31,6 +32,7 @@ export class WritePostComponent{
   faWarning = faWarning;
   private dialogRef = inject(MatDialogRef);
   private interestService = inject(InterestService);
+  private postService = inject(PostingService);
   page: 'post' | 'interest' = 'post';
   interests: {interestKey: string, interestName: string, checked: boolean}[] = [];
   checkedInterests: Interest[] = [];
@@ -125,7 +127,6 @@ export class WritePostComponent{
           this.checkedInterests.push(checkedInterest);
         }
       }
-    console.log(this.checkedInterests);
   }
 
   uncheckInterest(removeInterest: Interest){
@@ -150,4 +151,26 @@ export class WritePostComponent{
         reader.readAsDataURL(this.selectedFile);
       }
     }
+
+  onPost(event: Event): void{
+    event.preventDefault();
+    
+    const formData =  new FormData();
+    if(this.selectedFile !== null) 
+      formData.append('file', this.selectedFile!)
+    else
+      formData.append('file', '');
+    formData.append('text', this.textareaContent);
+    formData.append('interestKeys', '');
+    formData.forEach(item => {
+    })
+
+    this.checkedInterests.forEach(interest => { 
+      formData.append('interestKeys', interest.interestKey);
+    });
+
+    this.closeDialog();
+    this.postService.uploadPost(formData);
+
+  }
 }

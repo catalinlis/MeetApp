@@ -1,8 +1,7 @@
 using System.Security.Claims;
-using API.Data;
-using API.DTOs;
-using API.Entities;
-using API.Entities.ManyToMany;
+using MeetApp.DataEntities.Data;
+using MeetApp.DataEntities.DTOs;
+using MeetApp.DataEntities.Entities;
 using API.Services.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -78,6 +77,114 @@ public class UserController(UserManager<AppUser> userManager,
 
         return Ok(users);
     
+    }
+
+    [HttpGet("photos/{username}")]
+    public async Task<IActionResult> GetUserPhotos(string username){
+
+        var user = await userManager.FindByNameAsync(username);
+
+        if(user == null)
+            return BadRequest("There is no such user");
+
+        var photos = await context.Photos.Include(x => x.AddedBy)
+                                         .Include(x => x.LikedByUsers)
+                                         .Where(x => x.AddedById == user.Id).ToListAsync();
+
+        var photosDTO = photos.Select(x => new FeedItem{
+            Type = "Photo",
+            Content = x.Text,
+            ImageUrl = x.PhotoId,
+            CreatedAt = x.AddedAt,
+            Author = x.AddedBy.UserName,
+            LikesCount = x.LikesCount,
+            LikedByMe = x.LikedByUsers.Any(x => x.UserId == user.Id),
+            CommentsCount = x.CommentsCount,
+            PostId = x.Id
+        }).OrderByDescending(x => x.CreatedAt);
+
+        return Ok(new { photos = photosDTO });
+    }
+
+    [HttpGet("posts/{username}")]
+    public async Task<IActionResult> GetUserPosts(string username){
+        var user = await userManager.FindByNameAsync(username);
+
+        if(user == null)
+            return BadRequest("There is no such user");
+
+        var currentUsername = User.FindFirst(ClaimTypes.Name)?.Value;
+        var currentUser = await userManager.FindByNameAsync(currentUsername!);
+
+        if(currentUser == null)
+            return BadRequest("There is no such user");
+
+        var posts = await context.Posts.Include(x => x.LikedByUsers)
+                                       .Include(x => x.CreatedBy)
+                                       .Where(x => x.CreatedBy.Id == user.Id)
+                                       .ToListAsync();
+
+        var postsFeed = new List<FeedItem>();
+        
+        foreach(var post in posts)
+        {
+            var hasLiked = post.LikedByUsers.Any(x => x.UserId == currentUser.Id);
+            var postInterests = await context.PostInterests
+                                                .Where(x => x.PostId == post.Id)
+                                                .Select(x => x.Interest)
+                                                .ToListAsync();
+
+            var interests = mapper.Map<List<InterestDTO>>(postInterests);
+
+            var postFeed = new FeedItem
+            {
+                Type = "Post",
+                Content = post.Text,
+                Author = post.CreatedBy.UserName,
+                ImageUrl = post.ImageId,
+                CreatedAt = post.CreatedAt,
+                LikesCount = post.LikesCount,
+                LikedByMe = hasLiked,
+                CommentsCount = post.CommentsCount,
+                PostId = post.Id,
+                Interests = interests
+            };
+
+            postsFeed.Add(postFeed);
+
+        } 
+
+        var photos = await context.Photos.Include(x => x.LikedByUsers)
+                                         .Include(x => x.AddedBy)
+                                         .Where(x => x.AddedBy.Id == user.Id)
+                                         .ToListAsync();
+
+        var photosFeed = new List<FeedItem>();
+
+        foreach(var photo in photos){
+
+            var hasLiked = photo.LikedByUsers.Any(x => x.UserId == currentUser.Id);
+
+            var photoFeed = new FeedItem
+            {
+                Type = "Photo",
+                Content = photo.Text,
+                Author = photo.AddedBy.UserName,
+                ImageUrl = photo.PhotoId,
+                CreatedAt = photo.AddedAt,
+                LikesCount = photo.LikesCount,
+                CommentsCount = photo.CommentsCount,
+                LikedByMe = hasLiked,
+                PostId = photo.Id
+            };
+
+            photosFeed.Add(photoFeed);
+
+        }
+
+        var feedItems = postsFeed.Concat(photosFeed).OrderByDescending(x => x.CreatedAt).ToList();
+
+        return Ok(feedItems);
     }
 
 }

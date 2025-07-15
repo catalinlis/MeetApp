@@ -6,6 +6,7 @@ import { map } from 'rxjs';
 import { Interest } from '../_models/Interest';
 import { OnlineUsersService } from './hubs/online-users.service';
 import { ChatService } from './hubs/chat.service';
+import { NotificationsHubService } from './hubs/notifications-hub.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class AccountService {
   private http = inject(HttpClient);
   private onlineUsersService = inject(OnlineUsersService);
   private chatService = inject(ChatService);
+  private notificationHubService = inject(NotificationsHubService)
   baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null);
   imageCache = new Map();
@@ -23,7 +25,6 @@ export class AccountService {
     return this.http.post<User>(this.baseUrl + "account/register", model).pipe(
       map(user => {
         if(user){
-          console.log(user);
           this.setCurrentUser(user);
           this.chatService.startConnection(user);
           this.onlineUsersService.startConnection(user);
@@ -39,6 +40,7 @@ export class AccountService {
           this.setCurrentUser(user);
           this.chatService.startConnection(user);
           this.onlineUsersService.startConnection(user);
+          this.notificationHubService.startConnection(user);
         }
       })
     );
@@ -48,10 +50,11 @@ export class AccountService {
     localStorage.removeItem('user');
     this.currentUser.set(null);
     this.onlineUsersService.stopConnection();
+    this.chatService.stopConnection();
+    this.notificationHubService.stopConnection();
   }
 
   uploadImage(model: any){
-    console.log(this.currentUser());
     return this.http.post<{registerStep: number, profilePhoto: string}>(this.baseUrl + "data/upload-image/" + this.currentUser()?.userName , model);
   }
 
@@ -69,7 +72,6 @@ export class AccountService {
 
   setCurrentUser(user: User){
     localStorage.setItem('user', JSON.stringify(user));
-    console.log(localStorage.getItem('user'));
     this.currentUser.set(user);
   }  
 

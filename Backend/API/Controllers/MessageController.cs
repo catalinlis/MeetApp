@@ -1,10 +1,8 @@
-using API.Data;
-using API.DTOs;
-using API.Entities;
+using MeetApp.DataEntities.DTOs;
+using MeetApp.DataEntities.Entities;
 using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace API.Controllers;
 

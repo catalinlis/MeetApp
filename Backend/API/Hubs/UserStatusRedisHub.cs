@@ -1,4 +1,4 @@
-using API.Repositories.Interfaces;
+using MeetApp.DataEntities.Repositiories.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using StackExchange.Redis;
 
@@ -68,7 +68,6 @@ public class UserStatusRedisHub : Hub{
         var onlineFriends = onlineUsers.Intersect(friendsUsernames);
 
         foreach(var user in onlineFriends){
-            Console.WriteLine(user);
             var connectionId = await _redisDB.StringGetAsync($"online:{user}");
             await Clients.Client(connectionId).SendAsync(method, userId);
         }

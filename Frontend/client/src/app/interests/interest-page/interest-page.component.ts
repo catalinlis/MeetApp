@@ -90,7 +90,6 @@ export class InterestPageComponent implements OnInit{
       var tab = params['tab'] || 'posts';
       tab = tab.toString();
       this.selectedTab = StringProcess.capitalizeFirstLetter(tab);
-      console.log(this.selectedTab);
       this.buttons.indexOf(this.selectedTab);
       this.fetchTabContent(tab);
     });

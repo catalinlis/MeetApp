@@ -1,4 +1,4 @@
-using API.Repositories.Interfaces;
+using MeetApp.DataEntities.Repositiories.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 

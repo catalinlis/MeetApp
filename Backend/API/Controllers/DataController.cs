@@ -1,13 +1,13 @@
 using System.Security.Claims;
 using Amazon.S3;
 using Amazon.S3.Model;
-using API.Data;
-using API.Entities;
+using MeetApp.DataEntities.Data;
+using MeetApp.DataEntities.Entities;
 using API.Services;
+using API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
@@ -15,8 +15,8 @@ namespace API.Controllers;
 
 public class DataController(DataContext context, 
                             UserManager<AppUser> userManager,
-                            IAmazonS3 s3Client,
-                            CloudFrontService cloudFront) : BaseController{
+                            CloudFrontService cloudFront,
+                            IMediaStorageService storageService) : BaseController{
 
     [HttpGet("check")]
     public IActionResult Check(){
@@ -27,60 +27,54 @@ public class DataController(DataContext context,
 
     [HttpPost("upload-image/{username}")]
     public async Task<IActionResult> UploadFile([FromForm] IFormFile file, string username){
-        if(file == null || file.Length <= 0)
+        if(file == null || file.Length == 0)
             return BadRequest("Invalid file");
 
-        string bucketName = "catalin-first-bucket";
-        string fileKey = Guid.NewGuid().ToString();
+        if(username == null)
+            return BadRequest("Invalid username provided");
 
-        using (var memoryStream = new MemoryStream()){
-            await file.CopyToAsync(memoryStream);
+        var user = await userManager.FindByNameAsync(username);
 
-            var putRequest = new PutObjectRequest{
-                BucketName = bucketName,
-                Key = "uploads/" + fileKey,
-                InputStream = memoryStream
+        if(user == null)
+            return BadRequest("There is no such user");
+
+        var path = "photos";
+
+        var (success, fileKey) = await storageService.UploadFileAsync(file, path);
+
+        if(success){
+            var photo = new Photo
+            {
+                PhotoId = fileKey,
+                AddedBy = user
             };
-
-            var response = await s3Client.PutObjectAsync(putRequest);
-
-            if(response.HttpStatusCode == System.Net.HttpStatusCode.OK){
-                if(username != null){
-                    var user = await userManager.FindByNameAsync(username);
-                    user!.RegisterStep = 2;
-                    user!.ProfilePhoto = fileKey;
-                    var result = await userManager.UpdateAsync(user);
-                    if(result.Succeeded)
-                        return Ok(new { RegisterStep = 2, profilePhoto = user.ProfilePhoto });
-                }
-
-                return BadRequest("Could not save the token image in database");
-            }
+            
+            user.Photos.Add(photo);
+            user.RegisterStep = 2;
+            user.ProfilePhoto = fileKey;
+            var result = await userManager.UpdateAsync(user);
+            if(result.Succeeded)
+                return Ok(new { RegisterStep = 2, profilePhoto = user.ProfilePhoto });
             else
-                return StatusCode(500, "Error uploading file to S3");
+                return BadRequest("Could not save the token image in database");
         }
+        else
+            return StatusCode(500, "Error uploading file to S3");
     }
+    
 
     [HttpGet("get-image/{id}")]
     public async Task<IActionResult> GetPhoto(string id){
 
         var filename = id;
-        var bucketName = "catalin-first-bucket";
+        var path = "photos";
+
         try{
-            var request = new GetObjectRequest{
-                BucketName = bucketName,
-                Key = "uploads/" + filename
-            };
+            var (stream, contentType) = await storageService.GetFileAsync(filename, path);
 
-            using var response = await s3Client.GetObjectAsync(request);
-            var responseStream = response.ResponseStream;
-            var memoryStream = new MemoryStream();
+            return File(stream, contentType, filename);
 
-            await responseStream.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            return File(memoryStream, response.Headers["Content-Type"], filename);
-        } catch(AmazonS3Exception ex){
+        } catch(FileNotFoundException ex){
             return NotFound(new { Message = ex.Message });
         } catch(Exception ex){
             return StatusCode(500, new { Message = ex.Message });
@@ -90,8 +84,8 @@ public class DataController(DataContext context,
 
     [HttpGet("sign-url/{id}")]
     public async Task<IActionResult> GetPhotoUrl(string id){
-
-        string signedUrl = cloudFront.SignUrl(id);
+        var path = "photos";
+        string signedUrl = cloudFront.SignUrl(id, path);
 
         return Ok(new { signedUrl = signedUrl});
     }

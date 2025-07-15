@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment.development';
 import { Member } from '../_models/Member';
 import { AboutMember } from '../_models/AboutMember';
 import { Interest } from '../_models/Interest';
-import { query } from '@angular/animations';
+import { Feed } from '../_models/Feed';
 
 @Injectable({
   providedIn: 'root'
@@ -40,5 +40,13 @@ export class MembersService {
       params = params.append("usernames", username);
     })
     return this.http.get<Member[]>(this.baseUrl + "user/online-users", { params });
+  }
+
+  getMemberPhotos(username: string){
+    return this.http.get<{photos: Feed[]}>(this.baseUrl + "user/photos/" + username);
+  }
+
+  getMemberFeed(username: string){
+    return this.http.get<Feed[]>(this.baseUrl + "user/posts/" + username);
   }
 }

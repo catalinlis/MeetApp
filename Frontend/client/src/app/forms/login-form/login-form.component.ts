@@ -20,7 +20,6 @@ export class LoginFormComponent implements OnInit{
 
   login(): void{
     const { username, password } = this.loginForm.value;
-    console.log(`Username: ${username} Password: ${password}`);
     this.accountService.login(this.loginForm.value).subscribe({
       next: response => {
         this.router.navigateByUrl("/profile");

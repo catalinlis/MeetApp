@@ -1,4 +1,4 @@
-import { Component, computed, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { AboutMember } from '../../../../_models/AboutMember';
 import { MONTHS } from '../../../../constants/data-constants';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -7,15 +7,21 @@ import { faMailBulk } from '@fortawesome/free-solid-svg-icons';
 import { faFemale } from '@fortawesome/free-solid-svg-icons';
 import { faMale } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
+import { MembersService } from '../../../../_services/members.service';
+import { Member } from '../../../../_models/Member';
+import { User } from '../../../../_models/User';
+import { StringProcess } from '../../../../utils/StringProcess';
+import { LoaderComponent } from "../../../../loader/loader.component";
 
 @Component({
   selector: 'app-member-about',
   standalone: true,
-  imports: [FontAwesomeModule, CommonModule],
+  imports: [FontAwesomeModule, CommonModule, LoaderComponent],
   templateUrl: './member-about.component.html',
   styleUrl: './member-about.component.css'
 })
 export class MemberAboutComponent implements OnInit{
+  private memberService = inject(MembersService);
   faBirthdayCake = faBirthdayCake;
   faMailBulk = faMailBulk;
   faMale = faMale;
@@ -25,10 +31,13 @@ export class MemberAboutComponent implements OnInit{
     Female: faFemale
   };
   BirthDay = '';
-  @Input() aboutMember!: AboutMember;
+  loaded: boolean = false;
+  @Input() member!: Member;
+  aboutMember: AboutMember | null = null;
+
 
   ngOnInit(): void {
-    this.BirthDay = this.getBirthDay(this.aboutMember.dateOfBirth);
+    this.getAboutMember(this.member.username);
   }
 
   getBirthDay(birthday: Date): string{
@@ -39,6 +48,20 @@ export class MemberAboutComponent implements OnInit{
     const year = String(dateBirthday.getFullYear());
     
     return `${date} ${month} ${year}`;
+  }
+
+  getAboutMember(username: string) {
+    this.memberService.getAboutMember(username).subscribe({
+      next: (response) => {
+        this.aboutMember = response;
+        this.aboutMember.gender = StringProcess.capitalizeFirstLetter(this.aboutMember.gender);
+        this.BirthDay = this.getBirthDay(this.aboutMember.dateOfBirth);
+        this.loaded = true;
+      },
+      error: (err) => {
+        console.log(err.error);
+      }
+    });
   }
 
 }

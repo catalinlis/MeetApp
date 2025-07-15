@@ -32,7 +32,7 @@
     </form>
     <button mat-button class="add-interest" (click)="goToModalPage('interest')"><img src="assets/images/interests-icon.png" width="25px" height="25px"> Add Interest</button>
     <hr>
-    <button class="post-button" [disabled]="textareaContent === ''">Post</button>
+    <button class="post-button" (click)="onPost($event)" [disabled]="textareaContent === ''">Post</button>
   </div>
   <div class="content" *ngSwitchCase="'interest'">
     <div class="header">

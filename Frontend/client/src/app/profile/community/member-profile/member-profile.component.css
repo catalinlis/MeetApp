@@ -145,7 +145,6 @@
 
 .loading{
     width: 100%;
-    text-align: center;
     margin-top: 10px;
     border-radius: 10px;
     border: solid 1px rgb(180,180,180);
@@ -174,26 +173,42 @@
     margin-top: 10px;
     width: 100%;
     border-radius: 20px;
-    border: solid 1px rgb(200,200,200);
     margin-bottom: 50px;
 }
 
 .success h1{
-    height: 100%;
-    width: auto;
+    position: sticky;
+    top: 80px;
+    height: 140px;
+    width: 150px;
+    margin-top: 20px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    text-align: center;
     display: inline-block;
-    position: relative;
     vertical-align: top;
     padding-top: 50px;
     font-family: 'Roboto';
     font-weight: 500;
     font-size: 22pt;
     color: rgb(80,80,80);
+    background-color: rgb(240,240,240);
+    border: solid 1px rgb(230,230,230);
+    transform: translateX(0);
+    animation: slideRight 0.5s forwards;
 }
+
+@keyframes slideRight {
+    from {
+      transform: translateX(-200px);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
 
 .success .content{
     display: inline-block;
-    border-left: solid 1px rgb(200,200,200);
     padding: 20px;
     padding-left: 30px;
 }

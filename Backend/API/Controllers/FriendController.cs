@@ -1,7 +1,7 @@
-using API.Data;
-using API.DTOs;
-using API.Entities;
-using API.Entities.ManyToMany;
+using MeetApp.DataEntities.Data;
+using MeetApp.DataEntities.DTOs;
+using MeetApp.DataEntities.Entities;
+using MeetApp.DataEntities.Entities.ManyToMany;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;

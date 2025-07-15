@@ -1,8 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../../_models/User';
-import { FriendService } from '../friend.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,6 @@ export class OnlineUsersService {
   onlineUsers$ = new BehaviorSubject<string[]>([]);
 
   startConnection(user: User): Promise<void>{
-    console.log("Start connection");
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl("http://localhost:5100/userStatusHub", {
         accessTokenFactory: () => user.token
