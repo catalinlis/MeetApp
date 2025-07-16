@@ -34,13 +34,16 @@ export class NavbarComponent implements OnInit {
   notificationsCount = 0;
 
   ngOnInit(): void {
-    this.getNotificationsCount();
-    this.notificationHubService.receivedNotification$.subscribe((notification: RealtimeNotification) => {
-      const latest = notification;
-      if(latest){
-        this.showNotificationToast(latest);
-      }
-    })
+    if(this.accountService.currentUser()){
+
+      this.getNotificationsCount();
+      this.notificationHubService.receivedNotification$.subscribe((notification: RealtimeNotification) => {
+        const latest = notification;
+        if(latest){
+          this.showNotificationToast(latest);
+        }
+      })
+    }
   }
 
   private showNotificationToast(notification: RealtimeNotification){
@@ -101,6 +104,11 @@ export class NavbarComponent implements OnInit {
   toggleNotification(){
     this.notificationsCount = 0;
     this.notificationActive = !this.notificationActive;
+  }
+
+  handleCountClick(event: Event){
+    event.stopPropagation();
+    this.toggleNotification();
   }
 
   logout(): void{

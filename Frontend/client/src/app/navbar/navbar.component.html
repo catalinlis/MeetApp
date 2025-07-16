@@ -18,7 +18,9 @@
               </li>
             </ul>
             <div class="notifications" (click)="toggleNotification()" [class]="notificationActive ? 'active' : ''">
-              <div class="notifications-count" *ngIf="notificationsCount > 0">{{notificationsCount}}</div>
+              <div class="notifications-count" *ngIf="notificationsCount > 0" (click)="handleCountClick($event)">
+                {{notificationsCount}}
+              </div>
               <a><img src="/assets/images/notification.png" height="25px" alt=""></a>
             </div>
             <div class="messanger">
