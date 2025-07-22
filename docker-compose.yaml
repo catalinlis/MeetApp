@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  backend:
-    image: backend:latest
+  api-backend:
+    image: api-backend:latest
     networks:
       - app-network
     ports:
@@ -10,8 +10,24 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - REDIS_CONNECTION=redis:6379
+      - RABBITMQ_HOSTNAME=rabbit
     depends_on:
       - redis
+      - rabbit
+
+  notification-service:
+    image: notification-service:latest
+    networks:
+      - app-network
+    ports:
+      - "5104:5104"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - REDIS_CONNECTION=redis:6379
+      - RABBITMQ_HOSTNAME=rabbit
+    depends_on:
+      - redis
+      - rabbit
 
   frontend:
     image: frontend:latest
@@ -20,7 +36,7 @@ services:
     ports:
       - "4200:4200"
     depends_on:
-      - backend
+      - api-backend
 
   redis:
     image: redis
@@ -28,6 +44,19 @@ services:
       - app-network
     ports:
       - "6379:6379"
+
+  rabbit:
+    image: rabbitmq:4.0-management
+    networks:
+      - app-network
+    ports:
+      - "5672:5672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
 networks:
   app-network:

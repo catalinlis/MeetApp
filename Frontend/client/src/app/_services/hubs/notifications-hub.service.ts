@@ -4,6 +4,7 @@ import { User } from '../../_models/User';
 import * as signalR from '@microsoft/signalr';
 import { RealtimeNotification } from '../../_models/RealtimeNotification';
 import { NotificationService } from '../notification.service';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { NotificationService } from '../notification.service';
 export class NotificationsHubService {
   private hubConnection!: signalR.HubConnection;
   receivedNotification$ = new Subject<RealtimeNotification>();
+  notificationHubUrl = environment.notificationUrl;
 
   startConnection(user: User): Promise<void>{
     if(this.hubConnection && this.hubConnection.state !== signalR.HubConnectionState.Disconnected){
@@ -18,7 +20,7 @@ export class NotificationsHubService {
     };
 
     this.hubConnection = new signalR.HubConnectionBuilder()
-                          .withUrl("http://localhost:5104/notificationsHub", {
+                          .withUrl(this.notificationHubUrl, {
                             accessTokenFactory: () => user.token
                           })
                           .withAutomaticReconnect()
