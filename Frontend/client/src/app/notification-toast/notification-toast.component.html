@@ -1,7 +1,7 @@
-<div class="notification-toast">
-      <img [src]="image ? image : 'assets/images/user.png'" alt="avatar" class="avatar" />
-      <div class="content">
-        <p class="name">{{notification.senderFirstname}} {{notification.senderLastname}}</p>
-        <p class="message">{{notification.message}}</p>
-      </div>
-    </div>
+<div class="notification-toast" *ngIf="accountService.currentUser()">
+  <img [src]="image ? image : 'assets/images/user.png'" alt="avatar" class="avatar" />
+  <div class="content">
+    <p class="name">{{notification.senderFirstname}} {{notification.senderLastname}}</p>
+    <p class="message">{{notification.message}}</p>
+  </div>
+</div>

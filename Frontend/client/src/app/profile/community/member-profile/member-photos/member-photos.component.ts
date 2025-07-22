@@ -60,6 +60,8 @@ export class MemberPhotosComponent implements OnInit{
               createdAt: DateProcessing.formatPostDate(photo.createdAt)
             }
 
+            console.log(photoDTO);
+
             this.photos.push(photoDTO);
           }
         })
@@ -73,7 +75,6 @@ export class MemberPhotosComponent implements OnInit{
     return new Promise<Feed[]>((resolve, reject) => {
       this.memberService.getMemberPhotos(username).subscribe({
         next: (response) => {
-          console.log(response.photos);
           resolve(response.photos);
         },
         error: (err) => { 
@@ -105,6 +106,8 @@ export class MemberPhotosComponent implements OnInit{
   }
 
   seePost(extendedFeedItem: ExtendedPhoto): void{
+      console.log(extendedFeedItem);
+
       const feedback = this.seePostMat.open(SeePostComponent, {
         width: "90%",
         height: "90%",

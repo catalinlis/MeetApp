@@ -21,6 +21,7 @@ public class AppUser : IdentityUser<int> {
     [Required(ErrorMessage = "City is required")]
     public string City { get; set; } = string.Empty;
     public string ProfilePhoto { get; set; } = string.Empty;
+    public bool Resized { get; set; } = false;
     public List<Photo> Photos { get; set; } = new List<Photo>();
     public List<PhotoLikes> PhotosLiked { get; set; } = new List<PhotoLikes>();
     public List<Post> Posts { get; set; } = new List<Post>();

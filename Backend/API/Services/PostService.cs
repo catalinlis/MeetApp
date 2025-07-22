@@ -5,18 +5,25 @@ using MeetApp.DataEntities.Data;
 using Microsoft.EntityFrameworkCore;
 using API.Services.Interfaces;
 using AutoMapper;
+using MeetApp.DataEntities.Configurations;
+using MeetApp.DataEntities.Common;
 
 namespace API.Services;
 
 public class PostService(DataContext context,
                          IMediaStorageService storageService,
-                         IMapper mapper) : IPostService{
-    public async Task<ServiceResult<bool>> LikePhoto(AppUser user, Photo photo){
-        
+                         IMapper mapper,
+                         ISQSService sqsService,
+                         ILogger<PostService> logger) : IPostService
+{
+    public async Task<ServiceResult<bool>> LikePhoto(AppUser user, Photo photo)
+    {
+
         var Liked = photo.LikedByUsers.FirstOrDefault(x => x.UserId == user.Id);
 
-        if(Liked == null){
-            
+        if (Liked == null)
+        {
+
             var photoLike = new PhotoLikes
             {
                 UserId = user.Id,
@@ -27,7 +34,8 @@ public class PostService(DataContext context,
             context.PhotoLikes.Add(photoLike);
             photo.LikesCount++;
         }
-        else{
+        else
+        {
             photo.LikedByUsers.Remove(Liked);
             photo.LikesCount--;
         }
@@ -38,8 +46,9 @@ public class PostService(DataContext context,
 
         return ServiceResult<bool>.Ok(hasLiked);
     }
-    public async Task<ServiceResult<bool>> LikePost(AppUser user, Post post){
-        
+    public async Task<ServiceResult<bool>> LikePost(AppUser user, Post post)
+    {
+
         var Liked = post.LikedByUsers.FirstOrDefault(x => x.UserId == user.Id);
 
         if (Liked == null)
@@ -55,7 +64,8 @@ public class PostService(DataContext context,
             context.PostLikes.Add(postLike);
             post.LikesCount++;
         }
-        else{
+        else
+        {
             post.LikedByUsers.Remove(Liked);
             post.LikesCount--;
         }
@@ -66,17 +76,19 @@ public class PostService(DataContext context,
 
         return ServiceResult<bool>.Ok(hasLiked);
     }
-    public async Task<ServiceResult<FeedItem>> AddPhoto(AppUser user, IFormFile file, string text){
-        
-        var path = "photos";
-        string imageId = null!;
+    public async Task<ServiceResult<FeedItem>> AddPhoto(AppUser user, IFormFile file, string text)
+    {
 
-        var (success, fileKey) = await storageService.UploadFileAsync(file, path);
+        string? bucketKey = null;
+        string? imageId = null;
 
-        if(success)
-            imageId = fileKey;
-        else
-            return ServiceResult<FeedItem>.Fail("The photo couldn't be uploaded");
+        var result = await storageService.UploadFileAsync(file, BucketKeys.PhotoPath);
+
+        if (result.IsError)
+            return ServiceResult<FeedItem>.Fail(result.Error!);
+
+        bucketKey = $"{BucketKeys.PhotoPath}/{result.Data!}";
+        imageId = result.Data!;
 
         var photo = new Photo
         {
@@ -89,6 +101,11 @@ public class PostService(DataContext context,
         CreatedByUser!.Photos.Add(photo);
 
         await context.SaveChangesAsync();
+
+        var queueMessageResult = await sqsService.SendQueueMessage(photo.Id, bucketKey, NotificationResourceType.Photo);
+
+        if (queueMessageResult.IsError)
+            logger.LogWarning(queueMessageResult.Error);
 
         var feedItem = new FeedItem
         {
@@ -105,21 +122,24 @@ public class PostService(DataContext context,
         return ServiceResult<FeedItem>.Ok(feedItem);
 
     }
-    public async Task<ServiceResult<FeedItem>> AddPost(AppUser user, IFormFile? file, string text, List<string> interestKeys){
+    public async Task<ServiceResult<FeedItem>> AddPost(AppUser user, IFormFile? file, string text, List<string> interestKeys)
+    {
 
         var interests = await context.Interests.Where(x => interestKeys.Contains(x.InterestKey)).ToListAsync();
-        var path = "posts";
         var existFile = file != null && file.Length > 0 ? true : false;
-        string imageId = null!;
+        string? bucketKey = null;
+        string? imageId = null;
 
         if (existFile)
         {
-            var (success, fileKey) = await storageService.UploadFileAsync(file, path);
+            var result = await storageService.UploadFileAsync(file!, BucketKeys.PostPath);
 
-            if(success)
-                imageId = fileKey;
-            else
-                return  ServiceResult<FeedItem>.Fail("The file couldn't be uploaded");
+            if(result.IsError)
+                return ServiceResult<FeedItem>.Fail(result.Error!);
+
+            bucketKey = $"{BucketKeys.PostPath}/{result.Data!}";
+            imageId = result.Data!;
+                
         }
 
         var post = new Post
@@ -131,16 +151,25 @@ public class PostService(DataContext context,
         };
 
         post.PostInterests = interests.Select(interest => new PostInterest
-                        {
-                            Post = post,
-                            Interest = interest
-                        }).ToList();
+        {
+            Post = post,
+            Interest = interest
+        }).ToList();
 
         var CreatedByUser = await context.Users.FindAsync(user.Id);
 
-        CreatedByUser!.Posts.Add(post);
+        if(CreatedByUser != null)
+            CreatedByUser.Posts.Add(post);
 
         await context.SaveChangesAsync();
+
+        if (bucketKey != null)
+        {
+            var queueMessageResult = await sqsService.SendQueueMessage(post.Id, bucketKey, NotificationResourceType.Post);
+
+            if (queueMessageResult.IsError)
+                logger.LogWarning(queueMessageResult.Error);
+        }
 
         var feedItem = new FeedItem
         {
@@ -156,8 +185,9 @@ public class PostService(DataContext context,
 
         return ServiceResult<FeedItem>.Ok(feedItem);
     }
-    public async Task<ServiceResult<List<FeedItem>>> GetFeed(AppUser user){
-        
+    public async Task<ServiceResult<List<FeedItem>>> GetFeed(AppUser user)
+    {
+
         var friendsIds = await context.Friendships
                                 .Where(x => x.UserId == user.Id)
                                 .Select(x => x.FriendId)
@@ -171,8 +201,8 @@ public class PostService(DataContext context,
                             .ToListAsync();
 
         var postsFeed = new List<FeedItem>();
-        
-        foreach(var post in posts)
+
+        foreach (var post in posts)
         {
             var hasLiked = post.LikedByUsers.Any(x => x.UserId == user.Id);
             var postInterests = await context.PostInterests
@@ -198,7 +228,7 @@ public class PostService(DataContext context,
 
             postsFeed.Add(postFeed);
 
-        } 
+        }
 
         var photos = await context.Photos
                             .Where(x => friendsIds.Contains(x.AddedById))
@@ -208,7 +238,8 @@ public class PostService(DataContext context,
 
         var photosFeed = new List<FeedItem>();
 
-        foreach(var photo in photos){
+        foreach (var photo in photos)
+        {
 
             var hasLiked = photo.LikedByUsers.Any(x => x.UserId == user.Id);
 

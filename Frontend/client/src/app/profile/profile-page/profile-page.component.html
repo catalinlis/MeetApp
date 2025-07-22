@@ -3,16 +3,5 @@
     <app-profile-identity></app-profile-identity>
 </div>
 <app-feed></app-feed>
-<div class="online-users">
-    <div class="header text-center">Online friends</div>
-    @for(user of onlineMembers; track user){
-        <div class="user" (click)="redirectToChat(user)">
-            <div class="online-user-picture">
-                <img [src]="this.urlMap.get(user.username) || 'assets/images/user.png'" alt="">
-                <div class="icon"></div>
-            </div>
-            <span class="username">{{user.firstname}} {{user.lastname}}</span>
-        </div>
-    }
-</div>
+<app-online-users></app-online-users>
 </div>

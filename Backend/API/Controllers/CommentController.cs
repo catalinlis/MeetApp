@@ -3,12 +3,18 @@ using MeetApp.DataEntities.Entities;
 using MeetApp.DataEntities.Data;
 using API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using NotificationQueue.Services.Interfaces;
+using API.Helpers;
+using MeetApp.DataEntities.Configurations;
+using MeetApp.DataEntities.Repositiories.Interfaces;
 
 namespace API.Controllers;
 
 public class CommentController(
             UserManager<AppUser> userManager,
-            ICommentService commentService) : BaseController{
+            ICommentService commentService,
+            IQueueService queueService,
+            IPhotoRepository photoRepository) : BaseController{
                 
     [HttpGet("photo/{id}")]
     public async Task<IActionResult> GetPhotoComments(int id){
@@ -32,6 +38,20 @@ public class CommentController(
 
         if(await commentService.ExistPhotoId(id)){
             var comment = await commentService.AddPhotoComment(id, user, text);
+            var targetUserId = await photoRepository.GetOwnerPhoto(id);
+
+            if (targetUserId != -1)
+            {
+                var notificationMessage = NotificationMessageFactory.FromCustom(
+                                    notificationType: NotificationTypes.Comment,
+                                    senderId: user.Id,
+                                    targetId: targetUserId,
+                                    resourceId: id,
+                                    resourceType: NotificationResourceType.Photo,
+                                    timestamp: DateTimeOffset.UtcNow,
+                                    metadata: null);
+                await queueService.WriteMessage(notificationMessage);
+            }
 
             return Ok(new { Comment = comment });
         }
@@ -61,6 +81,22 @@ public class CommentController(
 
         if(await commentService.ExistPostId(id)){
             var comment = await commentService.AddPostComment(id, user, text);
+
+            var targetUserId = await photoRepository.GetOwnerPost(id);
+
+            if (targetUserId != -1)
+            {
+                var notificationMessage = NotificationMessageFactory.FromCustom(
+                                    notificationType: NotificationTypes.Comment,
+                                    senderId: user.Id,
+                                    targetId: targetUserId,
+                                    resourceId: id,
+                                    resourceType: NotificationResourceType.Post,
+                                    timestamp: DateTimeOffset.UtcNow,
+                                    metadata: null);
+
+                await queueService.WriteMessage(notificationMessage);
+            }
 
             return Ok(new { Comment = comment });
         }

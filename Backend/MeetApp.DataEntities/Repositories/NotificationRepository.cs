@@ -16,6 +16,7 @@ public class NotificationRepository: INotificationRepository{
         _context = context;
     }
     public async Task<Result<int>> AddNotification(NotificationMessageQueue message){
+
         var notificationMessage = new Notification
         {
             Type = message.Type,

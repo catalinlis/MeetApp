@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { User } from '../_models/User';
-import { map } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { Interest } from '../_models/Interest';
 import { OnlineUsersService } from './hubs/online-users.service';
 import { ChatService } from './hubs/chat.service';
@@ -18,8 +18,8 @@ export class AccountService {
   private notificationHubService = inject(NotificationsHubService)
   baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null);
-  imageCache = new Map();
-
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public userLoggedIn$ = this.currentUserSubject.asObservable();
 
   register(model: any){
     return this.http.post<User>(this.baseUrl + "account/register", model).pipe(
@@ -38,6 +38,8 @@ export class AccountService {
       map( user => {
         if(user){
           this.setCurrentUser(user);
+          this.currentUserSubject.next(user);
+          console.log(this.currentUserSubject);
           this.chatService.startConnection(user);
           this.onlineUsersService.startConnection(user);
           this.notificationHubService.startConnection(user);
@@ -49,6 +51,7 @@ export class AccountService {
   logout(){
     localStorage.removeItem('user');
     this.currentUser.set(null);
+    this.currentUserSubject.next(null);
     this.onlineUsersService.stopConnection();
     this.chatService.stopConnection();
     this.notificationHubService.stopConnection();
@@ -73,6 +76,7 @@ export class AccountService {
   setCurrentUser(user: User){
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
+    this.currentUserSubject.next(user);
   }  
 
   updateRegisterStep(step: number){

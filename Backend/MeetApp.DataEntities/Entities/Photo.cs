@@ -3,6 +3,8 @@ namespace MeetApp.DataEntities.Entities;
 public class Photo{
     public int Id { get; set; }
     public string PhotoId { get; set; } = string.Empty;
+    public bool Resized { get; set; } = false;
+    public string? ResizedPhotoId { get; set; }
     public string? Text { get; set; }
     public int AddedById { get; set; }
     public AppUser AddedBy { get; set; } = null!;

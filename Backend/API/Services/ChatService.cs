@@ -152,7 +152,7 @@ public class ChatService(IAmazonDynamoDB dynamoDbContext,
         var existsChats = await context.Chats.Where(x => (x.ChatFirstUserId == sender.Id && x.ChatSecondUserId == receiver.Id)
                                                       || (x.ChatFirstUserId == receiver.Id && x.ChatSecondUserId == sender.Id))
                                              .ToListAsync();
-        
+
         if( existsChats.Count == 0 ){
             var senderChatUser = new Chat{
                 ChatFirstUserId = sender.Id,

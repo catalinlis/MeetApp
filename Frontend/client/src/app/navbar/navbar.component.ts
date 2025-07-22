@@ -13,6 +13,7 @@ import { NotificationPanelComponent } from "./notification-panel/notification-pa
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { NotificationService } from '../_services/notification.service';
 import { ClickOutsideDirective } from '../_directives/click-outside.directive';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -34,13 +35,15 @@ export class NavbarComponent implements OnInit {
   notificationsCount = 0;
 
   ngOnInit(): void {
-    this.getNotificationsCount();
-    this.notificationHubService.receivedNotification$.subscribe((notification: RealtimeNotification) => {
-      const latest = notification;
-      if(latest){
-        this.showNotificationToast(latest);
-      }
-    })
+    this.accountService.userLoggedIn$
+      .pipe(filter(user => !!user))
+      .subscribe(user => {
+        this.getNotificationsCount();
+    });
+
+    this.notificationHubService.receivedNotification$.subscribe(notification => {
+      this.showNotificationToast(notification);
+    });
   }
 
   private showNotificationToast(notification: RealtimeNotification){
@@ -101,6 +104,11 @@ export class NavbarComponent implements OnInit {
   toggleNotification(){
     this.notificationsCount = 0;
     this.notificationActive = !this.notificationActive;
+  }
+
+  handleCountClick(event: Event){
+    event.stopPropagation();
+    this.toggleNotification();
   }
 
   logout(): void{

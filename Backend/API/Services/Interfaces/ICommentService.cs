@@ -3,7 +3,8 @@ using MeetApp.DataEntities.Entities;
 
 namespace API.Services.Interfaces;
 
-public interface ICommentService{
+public interface ICommentService
+{
     Task<IEnumerable<Comment>> GetPhotoComments(int photoId);
     Task<Comment> AddPhotoComment(int photoId, AppUser user, string text);
     Task<IEnumerable<Comment>> GetPostComments(int postId);

@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MeetApp.DataEntities.Common;
+using MeetApp.DataEntities.Configurations;
+using MeetApp.DataEntities.Repositiories.Interfaces;
 
 namespace API.Controllers;
 
@@ -16,7 +19,10 @@ namespace API.Controllers;
 public class DataController(DataContext context, 
                             UserManager<AppUser> userManager,
                             CloudFrontService cloudFront,
-                            IMediaStorageService storageService) : BaseController{
+                            IMediaStorageService storageService,
+                            IPhotoRepository photoRepository,
+                            ISQSService sqsService,
+                            ILogger<DataController> logger) : BaseController{
 
     [HttpGet("check")]
     public IActionResult Check(){
@@ -38,28 +44,35 @@ public class DataController(DataContext context,
         if(user == null)
             return BadRequest("There is no such user");
 
-        var path = "photos";
+        var result = await storageService.UploadFileAsync(file, BucketKeys.PhotoPath);
 
-        var (success, fileKey) = await storageService.UploadFileAsync(file, path);
-
-        if(success){
+        if(result.IsSuccess){
             var photo = new Photo
             {
-                PhotoId = fileKey,
+                PhotoId = result.Data!,
                 AddedBy = user
             };
             
             user.Photos.Add(photo);
             user.RegisterStep = 2;
-            user.ProfilePhoto = fileKey;
-            var result = await userManager.UpdateAsync(user);
-            if(result.Succeeded)
+            user.ProfilePhoto = result.Data!;
+
+            var updateResult = await userManager.UpdateAsync(user);
+
+            var bucketKey = $"{BucketKeys.PhotoPath}/{result.Data!}";
+            
+            var queueMessageResult = await sqsService.SendQueueMessage(photo.Id, bucketKey, NotificationResourceType.Photo);
+
+            if (queueMessageResult.IsError)
+                logger.LogWarning(queueMessageResult.Error);
+
+            if (updateResult.Succeeded)
                 return Ok(new { RegisterStep = 2, profilePhoto = user.ProfilePhoto });
             else
                 return BadRequest("Could not save the token image in database");
         }
         else
-            return StatusCode(500, "Error uploading file to S3");
+            return StatusCode(500, result.Error);
     }
     
 
@@ -82,10 +95,18 @@ public class DataController(DataContext context,
     }
 
 
-    [HttpGet("sign-url/{id}")]
-    public async Task<IActionResult> GetPhotoUrl(string id){
-        var path = "photos";
-        string signedUrl = cloudFront.SignUrl(id, path);
+    [HttpGet("sign-url/{fileKey}")]
+    public async Task<IActionResult> GetPhotoUrl(string fileKey){
+        Console.WriteLine(fileKey);
+        
+        var resized = await photoRepository.IsResized(fileKey, NotificationResourceType.Photo);
+
+        if (resized.IsError)
+            return NotFound(resized.Error);
+
+        var path = resized.Data ? BucketKeys.ResizedPhotoPath : BucketKeys.PhotoPath;
+
+        string signedUrl = cloudFront.SignUrl(fileKey, path);
 
         return Ok(new { signedUrl = signedUrl});
     }

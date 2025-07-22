@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using API.Helpers;
 using NotificationQueue.Services.Interfaces;
+using MeetApp.DataEntities.Repositiories.Interfaces;
 
 namespace API.Controllers;
 
@@ -20,7 +21,9 @@ public class PostController(UserManager<AppUser> userManager,
                             DataContext context,
                             IPostService postService,
                             CloudFrontService cloudFront,
-                            IQueueService queue) : BaseController{
+                            IQueueService queue, 
+                            IPhotoRepository photoRepository,
+                            ILogger<PostController> logger) : BaseController{
 
     [HttpPost("{username}")]
     public async Task<IActionResult> AddPost([FromForm] IFormFile? file, [FromForm] string text, [FromForm] List<string> interestKeys, string username){
@@ -37,13 +40,16 @@ public class PostController(UserManager<AppUser> userManager,
             await queue.WriteMessage(notificationMessage);
             return Ok(new { feedItem = result.Data });
         }
-        else
-            return BadRequest(result.ErrorMessage);
+        else{
+            logger.LogError(StatusCodes.Status500InternalServerError, result.ErrorMessage);
+            return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
+        }
 
     }
 
     [HttpPost("photo/{username}")]
-    public async Task<IActionResult> AddPhoto([FromForm] IFormFile file, [FromForm] string text, string username){
+    public async Task<IActionResult> AddPhoto([FromForm] IFormFile file, [FromForm] string? text, string username){
+
         var user = await userManager.FindByNameAsync(username);
 
         if(user == null)
@@ -53,15 +59,19 @@ public class PostController(UserManager<AppUser> userManager,
             return BadRequest("No photo provided");
 
         var result = await postService.AddPhoto(user, file, text);
-        
-        if(result.Success){
+
+        if (result.Success)
+        {
             var notificationMessage = NotificationMessageFactory.FromFeedItem(NotificationTypes.AddFeedItem, result.Data, user.Id);
             await queue.WriteMessage(notificationMessage);
 
             return Ok(new { feedItem = result.Data });
         }
         else
-            return BadRequest(result.ErrorMessage);
+        {
+            logger.LogError(StatusCodes.Status500InternalServerError, result.ErrorMessage);
+            return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
+        }
 
     }
 
@@ -84,21 +94,32 @@ public class PostController(UserManager<AppUser> userManager,
 
     [HttpGet("photo/{imageId}")]
     public async Task<IActionResult> GetPhoto(string imageId){
-        var filename = imageId;
-        var path = "photos";
-        string signedUrl = cloudFront.SignUrl(filename, path);
+        
+        var resized = await photoRepository.IsResized(imageId, NotificationResourceType.Photo);
+
+        if (resized.IsError)
+            return NotFound(resized.Error);
+
+        var path = resized.Data ? BucketKeys.ResizedPhotoPath : BucketKeys.PhotoPath;
+
+        string signedUrl = cloudFront.SignUrl(imageId, path);
 
         await Task.CompletedTask;
 
         return Ok(new { signedUrl = signedUrl });
-
     }
 
     [HttpGet("post/{imageId}")]
     public async Task<IActionResult> GetPostPhoto(string imageId){
-        var filename = imageId;
-        var path = "posts";
-        string signedUrl = cloudFront.SignUrl(filename, path);
+
+        var resized = await photoRepository.IsResized(imageId, NotificationResourceType.Post);
+
+        if (resized.IsError)
+            return NotFound(resized.Error);
+
+        var path = resized.Data ? BucketKeys.ResizedPostPath : BucketKeys.PostPath;
+
+        string signedUrl = cloudFront.SignUrl(imageId, path);
 
         await Task.CompletedTask;
 
@@ -124,7 +145,8 @@ public class PostController(UserManager<AppUser> userManager,
 
         var result = await postService.LikePhoto(user, photo);
 
-        if(result.Success){
+        if (result.Success)
+        {
             var type = result.Data ? NotificationTypes.Like : NotificationTypes.Unlike;
             var notificationMessage = NotificationMessageFactory.FromCustom(
                                     notificationType: type,
@@ -135,12 +157,15 @@ public class PostController(UserManager<AppUser> userManager,
                                     timestamp: DateTimeOffset.UtcNow,
                                     metadata: null);
             await queue.WriteMessage(notificationMessage);
-            
+
 
             return Ok(new { HasLiked = result.Data });
         }
         else
-            return BadRequest(result.ErrorMessage);
+        {
+            logger.LogError(StatusCodes.Status500InternalServerError, result.ErrorMessage);
+            return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
+        }
 
     }
 
@@ -163,7 +188,8 @@ public class PostController(UserManager<AppUser> userManager,
 
         var result = await postService.LikePost(user, post);
 
-        if(result.Success){
+        if (result.Success)
+        {
             var type = result.Data ? NotificationTypes.Like : NotificationTypes.Unlike;
             var notificationMessage = NotificationMessageFactory.FromCustom(
                                     notificationType: type,
@@ -178,6 +204,9 @@ public class PostController(UserManager<AppUser> userManager,
             return Ok(new { HasLiked = result.Data });
         }
         else
-            return BadRequest(result.ErrorMessage);
+        {
+            logger.LogError(StatusCodes.Status500InternalServerError, result.ErrorMessage);
+            return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
+        }
     }
  }

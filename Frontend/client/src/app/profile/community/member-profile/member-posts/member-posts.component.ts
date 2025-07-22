@@ -48,7 +48,10 @@ export class MemberPostsComponent {
     this.getMemberFeed(this.member.username).then(feed => {
 
       const imgPromises = feed.map((feedItem) => {
-        return this.getPostPhoto(feedItem).then((img) => ({type: feedItem.type, id: feedItem.postId, image: img}));
+        if(feedItem.imageUrl !== null )
+          return this.getPostPhoto(feedItem).then((img) => ({type: feedItem.type, id: feedItem.postId, image: img}));
+        else
+          return ({type: feedItem.type, id: feedItem.postId, image: null})
       });
 
       Promise.all(imgPromises).then(results => {

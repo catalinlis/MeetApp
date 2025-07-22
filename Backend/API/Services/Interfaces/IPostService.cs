@@ -3,7 +3,8 @@ using MeetApp.DataEntities.Entities;
 
 namespace API.Services.Interfaces;
 
-public interface IPostService{
+public interface IPostService
+{
     Task<ServiceResult<bool>> LikePhoto(AppUser user, Photo photo);
     Task<ServiceResult<bool>> LikePost(AppUser user, Post post);
     Task<ServiceResult<FeedItem>> AddPhoto(AppUser user, IFormFile file, string text);

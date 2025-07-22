@@ -103,6 +103,9 @@ namespace API.Migrations
                     b.Property<int>("RegisterStep")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("Resized")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -322,6 +325,12 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("Resized")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ResizedPhotoId")
+                        .HasColumnType("text");
+
                     b.Property<string>("Text")
                         .HasColumnType("text");
 
@@ -405,6 +414,12 @@ namespace API.Migrations
 
                     b.Property<int>("LikesCount")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("Resized")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ResizedImageId")
+                        .HasColumnType("text");
 
                     b.Property<string>("Text")
                         .IsRequired()

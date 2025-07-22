@@ -34,7 +34,6 @@ export class ChooseInterestComponent implements OnInit{
           var interest = { interestKey: interestInfo.interestKey, interestName: interestInfo.interestName, checked: false  };
           this.interestsData.push(interest);
         }
-        console.log(this.interestsData);
       },
       error: (err) => console.log(err.error)
     });

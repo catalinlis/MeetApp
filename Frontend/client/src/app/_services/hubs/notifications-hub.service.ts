@@ -25,6 +25,7 @@ export class NotificationsHubService {
                           .build();
 
     this.hubConnection.on("notification",(data: RealtimeNotification) => {
+      console.log(data);
       this.receivedNotification$.next(data);
     });
 
@@ -36,11 +37,8 @@ export class NotificationsHubService {
   }
 
   stopConnection(){
-   if(this.hubConnection){
-     this.hubConnection.stop().then(() => {
-       this.receivedNotification$ = new Subject<RealtimeNotification>();
-     });
-   }
+   if(this.hubConnection)
+     this.hubConnection.stop();
   }
 
 }

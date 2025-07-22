@@ -22,6 +22,9 @@ import { LoaderComponent } from "../../../loader/loader.component";
 import { MemberPhotosComponent } from "./member-photos/member-photos.component";
 import { MemberPostsComponent } from "./member-posts/member-posts.component";
 import { User } from '../../../_models/User';
+import { OnlineUsersService } from '../../../_services/hubs/online-users.service';
+import { NotificationService } from '../../../_services/notification.service';
+import { NotificationsHubService } from '../../../_services/hubs/notifications-hub.service';
 
 @Component({
   selector: 'app-member-profile',
@@ -37,7 +40,9 @@ export class MemberProfileComponent implements OnInit{
   private route = inject(ActivatedRoute);
   private accountService = inject(AccountService);
   private memberService = inject(MembersService);
-  private friendsService = inject(FriendService); 
+  private friendsService = inject(FriendService);
+  private onlineUsersService = inject(OnlineUsersService);
+  private notificationsHubService = inject(NotificationsHubService);
   private router = inject(Router);
   currentUser: User | null = null;
   profilePhoto: SafeUrl | null = null;
@@ -51,6 +56,7 @@ export class MemberProfileComponent implements OnInit{
   tabContent: string = '';
   photoLoaded: boolean = false;
   friends = false;
+  areFriendsLoaded = false;
   friendRequestSent = false;
   friendRequestReceived = false;
   
@@ -59,6 +65,23 @@ export class MemberProfileComponent implements OnInit{
   }
 
   ngOnInit(): void {
+
+    this.notificationsHubService.receivedNotification$.subscribe((notification) => {
+      if(notification.type === "friend_request" && 
+         notification.senderFirstname === this.member?.firstname &&
+         notification.senderLastname === this.member.lastname
+      ){
+        this.friendRequestReceived = true;
+      }
+
+      if(notification.type === "friend_request_accepted" && 
+         notification.senderFirstname === this.member?.firstname &&
+         notification.senderLastname === this.member.lastname
+      ){
+        this.friends = true;
+      }
+    });
+
     this.route.params.subscribe((params) => {
       this.member.username = params['username'];
       this.initStack();
@@ -147,8 +170,12 @@ export class MemberProfileComponent implements OnInit{
     this.friendsService.areFriends(currentUser, memberUsername).subscribe({
       next: (response) => {
         this.friends = response.areFriends;
+        this.areFriendsLoaded = true;
       },
-      error: (err) => console.log(err.error)
+      error: (err) => {
+        console.log(err.error)
+        this.areFriendsLoaded = true;
+      }
     });
   }
 
@@ -185,7 +212,10 @@ export class MemberProfileComponent implements OnInit{
 
   answerFriendRequest(currentUser: string, memberUsername: string){
     this.friendsService.answerFriendRequest(currentUser, memberUsername).subscribe({
-      next: _ => this.friends = true,
+      next: _ => {
+        this.friends = true;
+        this.onlineUsersService.newFriend(memberUsername);
+      },
       error: (err) => console.log(err.error)
     });
   }

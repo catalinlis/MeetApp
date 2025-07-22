@@ -12,27 +12,35 @@
                     <p class="location">{{member.city}}, {{member.country}}</p>
                 </div>
                 <div class="friends-button" *ngIf="currentUser?.userName !== member.username">
-                    <button *ngIf="this.friends === false && this.friendRequestSent === false && this.friendRequestReceived === false" class="add-friend" (click)="sendFriendRequest(currentUser!.userName, member.username)">
+                    <app-loader Cheight="40" Cwidth="170" *ngIf="!areFriendsLoaded"></app-loader>
+                    <button *ngIf="friends === false && 
+                                   friendRequestSent === false && 
+                                   friendRequestReceived === false &&
+                                   areFriendsLoaded" class="add-friend" (click)="sendFriendRequest(currentUser!.userName, member.username)">
                         <p>
                             <fa-icon [icon]="faAdd"></fa-icon>
-                            <fa-icon [icon]="faUserFriend"></fa-icon>
+                            <fa-icon [icon]="faUserFriend"></fa-icon> 
                             Add Friend
                         </p>
                     </button>
-                    <button *ngIf="this.friends === true" class="friends" disabled>
+                    <button *ngIf="friends && areFriendsLoaded" class="friends" disabled>
                         <p>
                             <fa-icon [icon]="faCheck"></fa-icon>
                             <fa-icon [icon]="faUserFriend"></fa-icon>
                             Friends
                         </p>
                     </button>
-                    <button *ngIf="this.friendRequestSent && this.friends === false" class="friend-request" disabled>
+                    <button *ngIf="friendRequestSent && 
+                                   friends === false &&
+                                   areFriendsLoaded" class="friend-request" disabled>
                         <p>
                             <fa-icon [icon]="faUserFriend" class=""></fa-icon>
                             Request Sent
                         </p>
                     </button>
-                    <button *ngIf="this.friendRequestReceived && this.friends === false" class="friend-request" (click)="answerFriendRequest(currentUser!.userName, member.username)">
+                    <button *ngIf="friendRequestReceived && 
+                                   friends === false &&
+                                   areFriendsLoaded" class="friend-request" (click)="answerFriendRequest(currentUser!.userName, member.username)">
                         <p>
                             <fa-icon [icon]="faUserFriend" class=""></fa-icon>
                             Accept Request

@@ -1,10 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { AccountService } from './_services/account.service';
 import { OnlineUsersService } from './_services/hubs/online-users.service';
 import { ChatService } from './_services/hubs/chat.service';
 import { NotificationsHubService } from './_services/hubs/notifications-hub.service';
 import { NavbarComponent } from "./navbar/navbar.component";
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -12,7 +13,8 @@ import { NavbarComponent } from "./navbar/navbar.component";
   standalone: true,
   imports: [
     RouterOutlet,
-    NavbarComponent
+    NavbarComponent,
+    CommonModule
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
@@ -22,6 +24,7 @@ export class AppComponent implements OnInit{
   private chatService = inject(ChatService);
   private onlineUsersService = inject(OnlineUsersService);
   private notificationHubService = inject(NotificationsHubService);
+  private router = inject(Router);
   
   ngOnInit(): void {
     this.setCurrentUser();
@@ -36,6 +39,10 @@ export class AppComponent implements OnInit{
     this.chatService.startConnection(user);
     this.onlineUsersService.startConnection(user);
     this.notificationHubService.startConnection(user);
+  }
+
+  isRegisterRoute(): boolean{
+    return this.router.url === '/register';
   }
 
 }

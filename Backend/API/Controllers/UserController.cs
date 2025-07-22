@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NotificationQueue.Helpers;
 
 namespace API.Controllers;
 
@@ -81,27 +82,47 @@ public class UserController(UserManager<AppUser> userManager,
 
     [HttpGet("photos/{username}")]
     public async Task<IActionResult> GetUserPhotos(string username){
-
         var user = await userManager.FindByNameAsync(username);
 
         if(user == null)
+            return BadRequest("There is no such user");
+
+        var currentUsername = User.FindFirst(ClaimTypes.Name)?.Value;
+        var currentUser = await userManager.FindByNameAsync(currentUsername!);
+
+        if(currentUser == null)
             return BadRequest("There is no such user");
 
         var photos = await context.Photos.Include(x => x.AddedBy)
                                          .Include(x => x.LikedByUsers)
                                          .Where(x => x.AddedById == user.Id).ToListAsync();
 
-        var photosDTO = photos.Select(x => new FeedItem{
-            Type = "Photo",
-            Content = x.Text,
-            ImageUrl = x.PhotoId,
-            CreatedAt = x.AddedAt,
-            Author = x.AddedBy.UserName,
-            LikesCount = x.LikesCount,
-            LikedByMe = x.LikedByUsers.Any(x => x.UserId == user.Id),
-            CommentsCount = x.CommentsCount,
-            PostId = x.Id
-        }).OrderByDescending(x => x.CreatedAt);
+        var photosDTO = new List<FeedItem>();
+
+        foreach (var photo in photos)
+        {
+            var hasLiked = photo.LikedByUsers.Any(x => x.UserId == currentUser.Id);
+
+            var photoDTO = new FeedItem
+            {
+                Type = "Photo",
+                Content = photo.Text,
+                ImageUrl = photo.PhotoId,
+                CreatedAt = photo.AddedAt,
+                Author = photo.AddedBy.UserName,
+                LikesCount = photo.LikesCount,
+                LikedByMe = hasLiked,
+                CommentsCount = photo.CommentsCount,
+                PostId = photo.Id
+            };
+
+            photosDTO.Add(photoDTO);
+        }
+
+        foreach (var feedItem in photosDTO)
+        {
+            ObjectPrinter.PrintProperties(feedItem);
+        }
 
         return Ok(new { photos = photosDTO });
     }
@@ -183,6 +204,11 @@ public class UserController(UserManager<AppUser> userManager,
         }
 
         var feedItems = postsFeed.Concat(photosFeed).OrderByDescending(x => x.CreatedAt).ToList();
+
+        foreach (var feedItem in feedItems)
+        {
+            ObjectPrinter.PrintProperties(feedItem);
+        }
 
         return Ok(feedItems);
     }

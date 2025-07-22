@@ -21,6 +21,7 @@ using StackExchange.Redis;
 using NotificationQueue.Services;
 using NotificationQueue.Services.Interfaces;
 using MeetApp.DataEntities.Configurations;
+using Amazon.SQS;
 
 var builder = WebApplication.CreateBuilder(args);
 Env.Load();
@@ -31,16 +32,17 @@ builder.Services.AddSingleton<EnvironmentVariables>();
 var envs = builder.Services.BuildServiceProvider().GetRequiredService<EnvironmentVariables>();
 
 builder.Services.AddDbContext<DataContext>(options => 
-    options.UseNpgsql(envs["DEFAULT_DATABASE_CONNECTION"], sql => sql.MigrationsAssembly("API")));
+    options.UseNpgsql(envs.Get(ConfigurationProperties.DBConnection), sql => sql.MigrationsAssembly("API")));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(envs["REDIS_CONNECTION"])
+    ConnectionMultiplexer.Connect(envs.Get(ConfigurationProperties.RedisConnection))
 );
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IMediaStorageService, MediaStorageService>();
@@ -50,7 +52,7 @@ builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddSingleton<CloudFrontService>();
 builder.Services.AddHttpClient();
 
-var credential = new BasicAWSCredentials(envs["AWS_ACCESS_KEY_ID"], envs["AWS_SECRET_KEY_ACCESS_ID"]);
+var credential = new BasicAWSCredentials(envs.Get(ConfigurationProperties.AwsAccessKeyId), envs.Get(ConfigurationProperties.AwsSecretKeyAccessId));
 
 var awsOptions = new AWSOptions{
     Credentials = credential,
@@ -61,6 +63,13 @@ builder.Services.AddDefaultAWSOptions(awsOptions);
 
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient(credential, RegionEndpoint.EUNorth1));
+builder.Services.AddSingleton<IAmazonSQS>(_ => new AmazonSQSClient(credential, RegionEndpoint.EUNorth1));
+builder.Services.AddScoped<ISQSService>(sp =>
+{
+    var sqsClient = sp.GetRequiredService<IAmazonSQS>();
+    return new SQSService(sqsClient, envs.Get(ConfigurationProperties.SqsUrl));
+});
+
 
 builder.Services.AddIdentityCore<AppUser>()
                 .AddEntityFrameworkStores<DataContext>();
@@ -82,9 +91,9 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-    var secret = envs["JWT_SECRET"];
-    var issuers = envs["VALID_ISSUERS"];
-    var audiences = envs["VALID_AUDIENCES"];
+    var secret = envs.Get(ConfigurationProperties.JwtSecret);
+    var issuers = envs.Get(ConfigurationProperties.ValidIssuer);
+    var audiences = envs.Get(ConfigurationProperties.ValidAudiences);
 
     if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(issuers) || string.IsNullOrEmpty(audiences))
         throw new ApplicationException("Jwt configuration is not set");
@@ -119,7 +128,7 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 // TODO: Add env variable for CORS policy
-app.UseCors(x => x.WithOrigins(envs["CORS_POLICY"]).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+app.UseCors(x => x.WithOrigins(envs.Get(ConfigurationProperties.CorsPolicy)).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 
 app.UseHttpsRedirection();
 

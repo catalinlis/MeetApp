@@ -32,6 +32,9 @@ public class NotificationDispatcher : INotificationDispatcher{
 
     public async Task<Result> DispatchAsync(NotificationMessageQueue message){
 
+        if (message.SenderUserId == message.TargetUserId)   // Sender Id and Target Id are the same
+            return Result.Success();                        // No notification needed to send
+
         using var scope = _scopeFactory.CreateScope();
         _notificationRepository = scope.ServiceProvider.GetRequiredService<INotificationRepository>();
         _userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
@@ -85,7 +88,6 @@ public class NotificationDispatcher : INotificationDispatcher{
                     var connectionId = await _redisService.GetConnectionId(username.Data);
 
                     ObjectPrinter.PrintProperties(result.Data);
-                    Console.WriteLine(connectionId);
 
                     if (!string.IsNullOrEmpty(connectionId))
                     {

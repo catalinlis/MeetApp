@@ -32,6 +32,12 @@ export class OnlineUsersService {
       this.onlineUsers$.next(users);
       this.persistOnlineUsers(this.onlineUsers$.value);
     });
+
+    this.hubConnection.on("ReceivedNewFriend", (userId: string) => {
+      this.newFriend(userId);
+      this.onlineUsers$.next([...this.onlineUsers$.value, userId]);
+      this.persistOnlineUsers(this.onlineUsers$.value);
+    })
   
     return this.hubConnection.start()
       .then(() => {
@@ -54,7 +60,7 @@ export class OnlineUsersService {
 
   requestOnlineUsers(){
     try{
-      this.hubConnection.invoke("GetOnlineUsers");
+      this.hubConnection.invoke("GetOnlineFriends");
     } catch(err){
       console.log("Error fetching users:", err);
     }
@@ -73,11 +79,16 @@ export class OnlineUsersService {
     return users;
   }
 
+  newFriend(username: string){
+    this.hubConnection.invoke("NewFriend", username);
+  }
+
   private startHeartbeat(){
+    
     setInterval(() => {
-      this.hubConnection.invoke("Heartbeat")
-        .then(() => console.log("Heartbeat sent!"))
-        .catch(err => console.error("Heartbeat error:", err));
+      if(this.hubConnection.state === signalR.HubConnectionState.Connected){
+        this.hubConnection.invoke("Heartbeat").catch(err => console.error("Heartbeat error:", err));
+      }
     }, 45000);
   }
 }

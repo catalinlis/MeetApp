@@ -200,7 +200,6 @@ export class SeePostComponent implements OnInit{
           const objectUrl = response.signedUrl;
           const img = new Image();
           img.src = objectUrl;
-          console.log(objectUrl);
           img.onload = () => {
             const imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
             resolve(imageUrl);

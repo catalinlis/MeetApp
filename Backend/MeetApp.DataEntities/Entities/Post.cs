@@ -7,6 +7,8 @@ namespace MeetApp.DataEntities.Entities;
 public class Post{
     public int Id { get; set; }
     public string? ImageId { get; set; }
+    public bool Resized { get; set; } = false;
+    public string? ResizedImageId { get; set; }
     public string Text { get; set; } = string.Empty;
     public int CreatedById { get; set; }
     [JsonIgnore]

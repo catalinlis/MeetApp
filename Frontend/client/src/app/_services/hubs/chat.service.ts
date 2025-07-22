@@ -50,6 +50,5 @@ export class ChatService {
     const currentItems = this.privateMessagesSubject.value;
     const updatedMessages = [...currentItems.slice(0, index), ...currentItems.slice(index+1)];
     this.privateMessagesSubject.next(updatedMessages);
-    console.log(this.privateMessagesSubject.value);
   }
 }

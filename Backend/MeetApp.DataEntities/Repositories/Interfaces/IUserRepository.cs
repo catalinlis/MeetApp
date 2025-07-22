@@ -3,6 +3,7 @@ using MeetApp.DataEntities.DTOs;
 using MeetApp.DataEntities.Entities;
 
 namespace MeetApp.DataEntities.Repositiories.Interfaces;
+
 public interface IUserRepository
 {
     Task<Result<AppUser>> GetUserById(int id);
