@@ -27,6 +27,7 @@ export class OnlineUsersComponent {
   ngOnInit(): void {
     this.onlineUsersService.onlineUsers$.subscribe(users => {
       this.onlineUsers = users;
+      console.log(users);
       this.memberService.getOnlineMembers(this.onlineUsers).subscribe((users) => {
         this.onlineMembers = users;
         

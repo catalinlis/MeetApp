@@ -32,12 +32,6 @@ export class OnlineUsersService {
       this.onlineUsers$.next(users);
       this.persistOnlineUsers(this.onlineUsers$.value);
     });
-
-    this.hubConnection.on("ReceivedNewFriend", (userId: string) => {
-      this.newFriend(userId);
-      this.onlineUsers$.next([...this.onlineUsers$.value, userId]);
-      this.persistOnlineUsers(this.onlineUsers$.value);
-    })
   
     return this.hubConnection.start()
       .then(() => {
@@ -81,6 +75,8 @@ export class OnlineUsersService {
 
   newFriend(username: string){
     this.hubConnection.invoke("NewFriend", username);
+    this.onlineUsers$.next([...this.onlineUsers$.value, username]);
+    this.persistOnlineUsers(this.onlineUsers$.value);
   }
 
   private startHeartbeat(){

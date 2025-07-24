@@ -61,7 +61,7 @@ public class UserStatusRedisHub : Hub
         var connectionId = await _redisDB.StringGetAsync($"online:{friendUsername}");
 
         if (!string.IsNullOrEmpty(connectionId))
-            await Clients.Client(connectionId!).SendAsync("ReceivedNewFriend", username);
+            await Clients.Client(connectionId!).SendAsync("UserOnline", username);
     }
 
     public async Task GetOnlineFriends()
