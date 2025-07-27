@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
-import { ReceiverMessage } from '../../_models/SenderMessage';
 import { User } from '../../_models/User';
 import { ChatMessage } from '../../_models/ChatMessage';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +12,11 @@ export class ChatService {
   private hubConnection!: signalR.HubConnection;
   private privateMessagesSubject = new BehaviorSubject<ChatMessage[]>([]);
   privateMessage$ = this.privateMessagesSubject.asObservable();
+  baseUrl = environment.chatHubUrl;
 
   startConnection(user: User){
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5100/chatHub", {
+      .withUrl(this.baseUrl, {
         accessTokenFactory: () => user.token
       })
       .withAutomaticReconnect()

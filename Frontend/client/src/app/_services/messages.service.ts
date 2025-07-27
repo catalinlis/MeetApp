@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { HttpParams } from '@angular/common/http';
 import { ChatMessage } from '../_models/ChatMessage';
 import { Member } from '../_models/Member';

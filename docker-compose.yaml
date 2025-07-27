@@ -2,13 +2,15 @@ version: '3.8'
 
 services:
   api-backend:
-    image: api-backend:latest
+    build:
+      context: ./Backend
+      dockerfile: API/Dockerfile
     networks:
       - app-network
     ports:
       - "5100:5100"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - REDIS_CONNECTION=redis:6379
       - RABBITMQ_HOSTNAME=rabbit
     depends_on:
@@ -16,13 +18,15 @@ services:
       - rabbit
 
   notification-service:
-    image: notification-service:latest
+    build:
+      context: ./Backend
+      dockerfile: NotificationService/Dockerfile
     networks:
       - app-network
     ports:
       - "5104:5104"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - REDIS_CONNECTION=redis:6379
       - RABBITMQ_HOSTNAME=rabbit
     depends_on:
@@ -30,11 +34,13 @@ services:
       - rabbit
 
   frontend:
-    image: frontend:latest
+    build:
+      context: ./Frontend/client
+      dockerfile: Dockerfile
     networks:
       - app-network
     ports:
-      - "4200:4200"
+      - "80:80"
     depends_on:
       - api-backend
 

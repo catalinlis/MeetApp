@@ -4,7 +4,7 @@ import { User } from '../../_models/User';
 import * as signalR from '@microsoft/signalr';
 import { RealtimeNotification } from '../../_models/RealtimeNotification';
 import { NotificationService } from '../notification.service';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ import { environment } from '../../../environments/environment.development';
 export class NotificationsHubService {
   private hubConnection!: signalR.HubConnection;
   receivedNotification$ = new Subject<RealtimeNotification>();
-  notificationHubUrl = environment.notificationUrl;
+  notificationHubUrl = environment.notificationHubUrl;
 
   startConnection(user: User): Promise<void>{
     if(this.hubConnection && this.hubConnection.state !== signalR.HubConnectionState.Disconnected){

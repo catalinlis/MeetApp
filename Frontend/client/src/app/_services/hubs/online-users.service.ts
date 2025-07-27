@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../../_models/User';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +10,11 @@ import { User } from '../../_models/User';
 export class OnlineUsersService {
   private hubConnection!: signalR.HubConnection;
   onlineUsers$ = new BehaviorSubject<string[]>([]);
+  baseUrl = environment.userStatusHubUrl;
 
   startConnection(user: User): Promise<void>{
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5100/userStatusHub", {
+      .withUrl(this.baseUrl, {
         accessTokenFactory: () => user.token
       })
       .withAutomaticReconnect()

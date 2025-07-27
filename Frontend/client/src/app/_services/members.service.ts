@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AccountService } from './account.service';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { Member } from '../_models/Member';
 import { AboutMember } from '../_models/AboutMember';
 import { Interest } from '../_models/Interest';
