@@ -1,16 +1,22 @@
-using API.Data;
-using API.DTOs;
-using API.Entities;
-using API.Entities.ManyToMany;
+using MeetApp.DataEntities.Data;
+using MeetApp.DataEntities.DTOs;
+using MeetApp.DataEntities.Entities;
+using MeetApp.DataEntities.Entities.ManyToMany;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using API.Helpers;
+using MeetApp.DataEntities.Configurations;
+using NotificationQueue.Services.Interfaces;
 
 namespace API.Controllers;
 
-public class FriendController(DataContext context, UserManager<AppUser> userManager, IMapper mapper): BaseController{
+public class FriendController(DataContext context,
+                              UserManager<AppUser> userManager,
+                              IMapper mapper,
+                              IQueueService queueService) : BaseController{
 
 [HttpPost("request/{sender}/{receiver}")]
     public async Task<IActionResult> SendFriendRequest(string sender, string receiver){
@@ -34,6 +40,17 @@ public class FriendController(DataContext context, UserManager<AppUser> userMana
 
         context.FriendRequests.Add(friendReq);
         await context.SaveChangesAsync();
+
+        var notificationMessage = NotificationMessageFactory.FromCustom(
+                                    notificationType: NotificationTypes.FriendRequest,
+                                    senderId: senderUser.Id,
+                                    targetId: receiverUser.Id,
+                                    resourceId: null,
+                                    resourceType: null,
+                                    timestamp: DateTimeOffset.UtcNow,
+                                    metadata: null);
+
+        await queueService.WriteMessage(notificationMessage);
 
         return Ok();
     }
@@ -117,6 +134,17 @@ public class FriendController(DataContext context, UserManager<AppUser> userMana
         context.Friendships.Add(friendshipTargetUser);
         
         await context.SaveChangesAsync();
+
+        var notificationMessage = NotificationMessageFactory.FromCustom(
+                                    notificationType:  NotificationTypes.FriendRequestAccepted,
+                                    senderId: currentUser.Id,
+                                    targetId: targetUser.Id,
+                                    resourceId: null,
+                                    resourceType: null,
+                                    timestamp: DateTimeOffset.UtcNow,
+                                    metadata: null);
+
+        await queueService.WriteMessage(notificationMessage);
 
         return Ok();
     }

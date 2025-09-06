@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-expand-md fixed-top">
   <div class="container">
-        <a routerLink="/" routerLinkActive="active" class="navbar-brand app-name" href="#">MeetApp</a>
+        <a routerLink="/" class="navbar-brand app-name" href="#">MeetApp</a>
         @if(this.accountService.currentUser() !== null){
         
           @if(this.accountService.currentUser()?.registerStep == 3){
@@ -11,17 +11,20 @@
                 <input type="text" placeholder="Cauta..." autocomplete="off">
               </li>
               <li class="nav-item ms-4">  
-                <a href="/community" routerLinkActive="active" class="nav-link">Community</a>
+                <a routerLink="/community" routerLinkActive="active" class="nav-link">Community</a>
               </li>
               <li class="nav-item ms-2">  
-                <a href="/interests" routerLinkActive="active" class="nav-link">Interests</a>
+                <a routerLink="/interests" routerLinkActive="active" class="nav-link">Interests</a>
               </li>
             </ul>
-            <div class="notifications">
+            <div class="notifications" (click)="toggleNotification()" [class]="notificationActive ? 'active' : ''">
+              <div class="notifications-count" *ngIf="notificationsCount > 0" (click)="handleCountClick($event)">
+                {{notificationsCount}}
+              </div>
               <a><img src="/assets/images/notification.png" height="25px" alt=""></a>
             </div>
             <div class="messanger">
-              <a href="messages"><img src="/assets/images/chat.png" height="25px"></a>
+              <a routerLink="/messages"><img src="/assets/images/chat.png" height="25px"></a>
             </div>
           }
           <div class="logout" style="margin-right: 0px;">
@@ -30,3 +33,10 @@
       }
   </div>
 </nav>
+<app-notification-panel
+  *ngIf="notificationActive && accountService.currentUser() !== null"
+  appClickOutside
+  [appClickOutsideExcludeSelectors]="['.notifications']"
+  (appClickOutside)="notificationActive = false"
+>
+</app-notification-panel>

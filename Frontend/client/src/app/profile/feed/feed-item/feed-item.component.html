@@ -1,0 +1,47 @@
+<div class="post-loader" *ngIf="!this.postPhotoLoaded || !this.profilePhotoLoaded">
+    <div class="post">
+        <app-loader Cwidth="40" Cheight="40" [circle]="true" MarginLeft="20" [inlineBlock]="true"></app-loader>
+        <app-loader Cwidth="150" Cheight="40" MarginLeft="10" MarginTop="-10" [inlineBlock]="true"></app-loader>
+        <app-loader Cwidth="300" Cheight="30" MarginLeft="20" MarginTop="15"></app-loader>
+        <app-loader Cwidth="660" Cheight="30" MarginLeft="20" MarginTop="15"></app-loader>
+        <app-loader Cwidth="660" Cheight="30" MarginLeft="20" MarginTop="15"></app-loader>
+        <app-loader Cwidth="660" Cheight="30" MarginLeft="20" MarginTop="15"></app-loader>
+        <app-loader Cwidth="660" Cheight="30" MarginLeft="20" MarginTop="15"></app-loader>
+    </div>
+</div>
+<div class="post" *ngIf="this.profilePhotoLoaded && this.postPhotoLoaded">
+    <div class="profile-pic">
+        <img width="40" height="40" [src]="this.imageUrl ? this.imageUrl : 'assets/images/user.png'" style="background-size:auto 100%;" class="profile-pic"  alt="">
+    </div>
+    <div class="header">
+        <a [href]="'/community/' + feedItem.author" class="name">{{user?.firstname}} {{user?.lastname}}</a>
+        <div class="time">{{createdAt}}</div>
+    </div>
+    <div class="interests">
+        <ng-container *ngFor="let interest of feedItem.interests">
+            <a class="interest" [href]="'/interests/' + interest.interestKey"><img src="assets/images/tag.png" width="12" height="12"> {{interest.interestName}}</a>    
+        </ng-container>
+    </div>
+    <div class="text">
+        {{feedItem.content}}
+    </div>
+    <div class="image" *ngIf="feedItem.imageUrl !== null">
+        <img (click)="seePost()" width="500" height="500" [src]="this.postImage" style="background-size:auto 100%;" class="image"  alt="">
+    </div>
+    <div class="counts" *ngIf="feedItem.likesCount > 0 || feedItem.commentsCount > 0">
+        <button class="likes" *ngIf="feedItem.likesCount > 0">
+            <img src="assets/images/like_count.png" width="20" height="20">
+            <p class="like-count">{{feedItem.likesCount}}</p>
+        </button>
+        <button class="comments" *ngIf="feedItem.commentsCount > 0">{{feedItem.commentsCount}} comments</button>
+    </div>
+    <button (click)="like()" class="like" [class]="isLiked ? 'isLiked' : 'notLiked'"><img [src]="isLiked ? '/assets/images/like_active.png' : '/assets/images/like_inactive.png' " width="20" height="20"> 
+        @if(isLiked){
+            Liked
+        }
+        @else{
+            Like
+        }
+    </button>
+    <button class="comment" (click)="commentPost()"><img src="/assets/images/comment.png" width="20" height="20"> Comment</button>
+</div>

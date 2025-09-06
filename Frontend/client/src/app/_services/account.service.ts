@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { User } from '../_models/User';
-import { map } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { Interest } from '../_models/Interest';
 import { OnlineUsersService } from './hubs/online-users.service';
 import { ChatService } from './hubs/chat.service';
+import { NotificationsHubService } from './hubs/notifications-hub.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,16 +15,16 @@ export class AccountService {
   private http = inject(HttpClient);
   private onlineUsersService = inject(OnlineUsersService);
   private chatService = inject(ChatService);
+  private notificationHubService = inject(NotificationsHubService)
   baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null);
-  imageCache = new Map();
-
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public userLoggedIn$ = this.currentUserSubject.asObservable();
 
   register(model: any){
     return this.http.post<User>(this.baseUrl + "account/register", model).pipe(
       map(user => {
         if(user){
-          console.log(user);
           this.setCurrentUser(user);
           this.chatService.startConnection(user);
           this.onlineUsersService.startConnection(user);
@@ -37,8 +38,11 @@ export class AccountService {
       map( user => {
         if(user){
           this.setCurrentUser(user);
+          this.currentUserSubject.next(user);
+          console.log(this.currentUserSubject);
           this.chatService.startConnection(user);
           this.onlineUsersService.startConnection(user);
+          this.notificationHubService.startConnection(user);
         }
       })
     );
@@ -47,11 +51,13 @@ export class AccountService {
   logout(){
     localStorage.removeItem('user');
     this.currentUser.set(null);
+    this.currentUserSubject.next(null);
     this.onlineUsersService.stopConnection();
+    this.chatService.stopConnection();
+    this.notificationHubService.stopConnection();
   }
 
   uploadImage(model: any){
-    console.log(this.currentUser());
     return this.http.post<{registerStep: number, profilePhoto: string}>(this.baseUrl + "data/upload-image/" + this.currentUser()?.userName , model);
   }
 
@@ -69,8 +75,8 @@ export class AccountService {
 
   setCurrentUser(user: User){
     localStorage.setItem('user', JSON.stringify(user));
-    console.log(localStorage.getItem('user'));
     this.currentUser.set(user);
+    this.currentUserSubject.next(user);
   }  
 
   updateRegisterStep(step: number){

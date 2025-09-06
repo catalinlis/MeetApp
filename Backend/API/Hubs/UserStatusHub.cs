@@ -1,8 +1,11 @@
-using API.Repositories.Interfaces;
+using MeetApp.DataEntities.Repositiories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
-public class UserStatusHub(IUserRepository userRepository) : Hub{
+[Authorize]
+public class UserStatusHub(IUserRepository userRepository) : Hub
+{
     private static ConcurrentDictionary<string, string> OnlineUsers = new ConcurrentDictionary<string, string>();
 
     public override async Task OnConnectedAsync()
@@ -25,7 +28,8 @@ public class UserStatusHub(IUserRepository userRepository) : Hub{
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task GetOnlineUsers(){
+    public async Task GetOnlineUsers()
+    {
         var callerConnectionId = Context.ConnectionId;
         var currentUsername = Context.User?.Identity?.Name;
         var friendsUsernames = await userRepository.GetUserFriendsUsernames(currentUsername);
@@ -40,13 +44,15 @@ public class UserStatusHub(IUserRepository userRepository) : Hub{
         await Clients.Caller.SendAsync("ReceiveOnlineUsers", onlineFriends);
     }
 
-    private async Task NotifyFriendsAsync(string userId, string method){
+    private async Task NotifyFriendsAsync(string userId, string method)
+    {
         var friendsUsernames = await userRepository.GetUserFriendsUsernames(userId);
-        
+
         var onlineFriends = OnlineUsers.Where(x => friendsUsernames.Contains(x.Key))
                                        .Select(x => x.Value).ToList();
 
-        foreach(var connectionId in onlineFriends){
+        foreach (var connectionId in onlineFriends)
+        {
             await Clients.Client(connectionId).SendAsync(method, userId);
         }
     }

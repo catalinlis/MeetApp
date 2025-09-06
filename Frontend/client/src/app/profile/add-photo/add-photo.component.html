@@ -1,0 +1,29 @@
+<div class="content">
+      <div class="header">
+        <p class="text-center">Upload Photo</p>
+        <button class="close-button" (click)="closeDialog()"><fa-icon [icon]="faClose"></fa-icon></button>
+    </div>
+    <hr>
+    <mat-dialog-content>
+      <div class="profile">
+        <div class="profile-pic"><img  class="profile-pic" [src]="data.userPhoto ? data.userPhoto : 'assets/images/user.png'" width="40" height="40" alt=""/></div>
+        <div class="profile-name">{{data.firstname}} {{data.lastname}}</div>
+      </div>
+      <textarea matInput 
+                cdkTextareaAutosize 
+                #autosize="cdkTextareaAutosize" 
+                cdkAutosizeMinRows="2"
+                cdkAutosizeMaxRows="3" 
+                [(ngModel)]="textareaContent"
+                placeholder="What's on your mind?"></textarea>
+    </mat-dialog-content>
+    <div class="photo text-center" *ngIf="previewUrl !== null">
+                    <img [src]="previewUrl" alt="" width="450">
+                </div>
+    <form>
+      <input type="file" (change)="onFileSelected($event)" id="image" accept="image/*">
+      <label for="image" class="add-photo text-center"><img src="assets/images/photos-icon.png" width="25px" height="25px"> Add Photo</label>
+    </form>
+    <hr>
+    <button class="post-button checked" (click)="onPost($event)" [disabled]="previewUrl === null">Post</button>
+</div>

@@ -13,6 +13,7 @@ import { InterestPageComponent } from './interests/interest-page/interest-page.c
 import { interestPlaceholderResolver } from './_resolvers/interest-placeholder.resolver';
 import { InterestsPageComponent } from './interests/interests-page/interests-page.component';
 import { MessagesPageComponent } from './messages/messages-page/messages-page.component';
+import { MemberPhotosComponent } from './profile/community/member-profile/member-photos/member-photos.component';
 
 export const routes: Routes = [
     {path: '', component: FirstStyleComponent, canActivate: [loggedInGuard]},

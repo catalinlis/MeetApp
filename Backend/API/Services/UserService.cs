@@ -1,5 +1,5 @@
-using API.DTOs;
-using API.Repositories.Interfaces;
+using MeetApp.DataEntities.DTOs;
+using MeetApp.DataEntities.Repositiories.Interfaces;
 using API.Services.Interfaces;
 
 namespace API.UserServices;

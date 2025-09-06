@@ -1,0 +1,58 @@
+<ng-container [ngSwitch]="page">
+  <div class="content" *ngSwitchCase="'post'">
+      <div class="header">
+        <p class="text-center">Create Post</p>
+        <button class="close-button" (click)="closeDialog()"><fa-icon [icon]="faClose"></fa-icon></button>
+    </div>
+    <hr>
+    <mat-dialog-content>
+      <div class="profile">
+        <div class="profile-pic"><img  class="profile-pic" [src]="data.userPhoto ? data.userPhoto : 'assets/images/user.png'" width="40" height="40" alt=""/></div>
+        <div class="profile-name">{{data.firstname}} {{data.lastname}}</div>
+      </div>
+      <textarea matInput 
+                cdkTextareaAutosize 
+                #autosize="cdkTextareaAutosize" 
+                cdkAutosizeMinRows="2"
+                cdkAutosizeMaxRows="3" 
+                [(ngModel)]="textareaContent"
+                placeholder="What's on your mind?"></textarea>
+    </mat-dialog-content>
+    <div class="photo text-center" *ngIf="previewUrl !== null">
+                    <img [src]="previewUrl" alt="" width="450">
+                </div>
+    <div class="labels" *ngIf="checkedInterestsCount > 0">
+      @for(interest of checkedInterests; track interest){
+        <div class="label-interest"><div class="remove-interest text-center"><img src="assets/images/remove.png" width="18" height="18" (click)="uncheckInterest(interest)"></div> {{interest.interestName}}</div>
+      }
+    </div>
+    <form>
+      <input type="file" (change)="onFileSelected($event)" id="image" accept="image/*">
+      <label for="image" class="add-photo text-center"><img src="assets/images/photos-icon.png" width="25px" height="25px"> Add Photo</label>
+    </form>
+    <button mat-button class="add-interest" (click)="goToModalPage('interest')"><img src="assets/images/interests-icon.png" width="25px" height="25px"> Add Interest</button>
+    <hr>
+    <button class="post-button" (click)="onPost($event)" [disabled]="textareaContent === ''">Post</button>
+  </div>
+  <div class="content" *ngSwitchCase="'interest'">
+    <div class="header">
+        <button class="back-button text-center" (click)="goBack()"><fa-icon [icon]="faArrowLeft"></fa-icon></button>
+        <p class="text-center">Choose Interest</p>
+        <button class="close-button" (click)="closeDialog()"><fa-icon [icon]="faClose"></fa-icon></button>
+    </div>
+    <hr>
+    <div class="choose-interest-layout text-center">
+      @for (interest of this.interests; track interest.interestKey){
+        <input type="checkbox" [id]="interest.interestKey" 
+                               [name]="interest.interestKey" 
+                               [value]="interest.interestKey"
+                               [(ngModel)]="interest.checked"
+                               (change)="countCheckedInterests($event)">
+        <label [for]="interest.interestKey" class="interest-button">{{interest.interestName}}</label>
+      }
+    </div>
+    <div class="error text-center" *ngIf="checkedInterestsCount > 3"><fa-icon [icon]="faWarning"></fa-icon> You can choose maximum of 3 interests</div>
+    <hr>
+    <button class="select-button text-center" (click)="selectInterests()" [disabled]="checkedInterestsCount === 0 || checkedInterestsCount > 3">Select</button>
+  </div>
+</ng-container>

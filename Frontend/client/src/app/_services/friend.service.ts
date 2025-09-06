@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { AccountService } from './account.service';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { Member } from '../_models/Member';
 
 @Injectable({
@@ -42,6 +41,5 @@ export class FriendService {
         this.friends.push(friend.username);
       });
     });
-    console.log("FriendService "+ this.friends);
   }
 }

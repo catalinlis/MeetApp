@@ -1,7 +1,27 @@
 # Ignore build output directories (common in .NET projects)
-Backend/API/bin/*
-Backend/API/obj/*
+.vscode
+
+Backend/.vscode
+
+Backend/API/bin
+Backend/API/obj
 Backend/API/.env
+Backend/API/.vscode
+
+Backend/NotificationService/bin
+Backend/NotificationService/obj
+Backend/NotificationService/.env
+Backend/NotificationService/.vscode
+
+Backend/NotificationQueue.Services/bin
+Backend/NotificationQueue.Services/obj
+Backend/NotificationQueue.Services/.env
+Backend/NotificationQueue.Services/.vscode
+
+Backend/MeetApp.DataEntities/bin
+Backend/MeetApp.DataEntities/obj
+Backend/MeetApp.DataEntities/.env
+Backend/MeetApp.DataEntities/.vscode
 
 # Compiled output
 /Frontend/client/dist

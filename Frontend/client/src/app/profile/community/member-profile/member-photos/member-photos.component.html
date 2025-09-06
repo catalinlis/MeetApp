@@ -1,0 +1,23 @@
+<div class="container" *ngIf="!loading">
+    <div class="row g-4">
+        <div class="col-4">
+            <app-loader Cheight="225" Cwidth="225" [radius]="10"></app-loader>
+        </div>
+        <div class="col-4">
+            <app-loader Cheight="225" Cwidth="225" [radius]="10"></app-loader>
+        </div>
+        <div class="col-4">
+            <app-loader Cheight="225" Cwidth="225" [radius]="10"></app-loader>
+        </div>
+    </div>
+</div>
+<div class="container" *ngIf="loading">
+    <div class="row g-4">
+        <ng-container *ngFor="let photo of photos">
+            <div class="col-4">
+                <img [src]="photo.image" (click)="seePost(photo)">
+            </div>
+        </ng-container>
+    </div>
+</div>
+

@@ -1,4 +1,4 @@
-import { Component, inject, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { NavbarComponent } from "../../../navbar/navbar.component";
 import { Member } from '../../../_models/Member';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,11 +18,18 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FriendService } from '../../../_services/friend.service';
 import { MemberFriendsComponent } from "./member-friends/member-friends.component";
 import { Interest } from '../../../_models/Interest';
+import { LoaderComponent } from "../../../loader/loader.component";
+import { MemberPhotosComponent } from "./member-photos/member-photos.component";
+import { MemberPostsComponent } from "./member-posts/member-posts.component";
+import { User } from '../../../_models/User';
+import { OnlineUsersService } from '../../../_services/hubs/online-users.service';
+import { NotificationService } from '../../../_services/notification.service';
+import { NotificationsHubService } from '../../../_services/hubs/notifications-hub.service';
 
 @Component({
   selector: 'app-member-profile',
   standalone: true,
-  imports: [NavbarComponent, CommonModule, MemberAboutComponent, MemberInterestsComponent, FontAwesomeModule, MemberFriendsComponent],
+  imports: [NavbarComponent, CommonModule, MemberAboutComponent, MemberInterestsComponent, FontAwesomeModule, MemberFriendsComponent, LoaderComponent, MemberPhotosComponent, MemberPostsComponent],
   templateUrl: './member-profile.component.html',
   styleUrl: './member-profile.component.css'
 })
@@ -33,113 +40,147 @@ export class MemberProfileComponent implements OnInit{
   private route = inject(ActivatedRoute);
   private accountService = inject(AccountService);
   private memberService = inject(MembersService);
-  private friendsService = inject(FriendService); 
+  private friendsService = inject(FriendService);
+  private onlineUsersService = inject(OnlineUsersService);
+  private notificationsHubService = inject(NotificationsHubService);
   private router = inject(Router);
-  
-  currentUser: string = "";
+  currentUser: User | null = null;
+  profilePhoto: SafeUrl | null = null;
+  currentProfilePhoto: SafeUrl | null = null;
   member = {} as Member;
   aboutMember = {} as AboutMember;
   interests: Interest[] = [];
   imageUrl: SafeUrl | null = null;
   buttons: string[] =  ["About", "Posts","Friends", "Photos", "Interests"];
-  selectedTab: string = 'About'; // Default selected tab
-  tabContent: string = ''; // Content for the selected tab
-  loading: boolean = false; // Show loading indicator
-  photoLoading: boolean = true;
+  selectedTab: string = 'About';
+  tabContent: string = '';
+  photoLoaded: boolean = false;
   friends = false;
+  areFriendsLoaded = false;
   friendRequestSent = false;
   friendRequestReceived = false;
-  error: string | null = null; // Handle errors
   
-    
   constructor(private sanitizer: DomSanitizer, private location: Location) {
-    this.currentUser = this.accountService.currentUser()!.userName;
+    this.currentUser = this.accountService.currentUser()!;
   }
 
   ngOnInit(): void {
+
+    this.notificationsHubService.receivedNotification$.subscribe((notification) => {
+      if(notification.type === "friend_request" && 
+         notification.senderFirstname === this.member?.firstname &&
+         notification.senderLastname === this.member.lastname
+      ){
+        this.friendRequestReceived = true;
+      }
+
+      if(notification.type === "friend_request_accepted" && 
+         notification.senderFirstname === this.member?.firstname &&
+         notification.senderLastname === this.member.lastname
+      ){
+        this.friends = true;
+      }
+    });
+
     this.route.params.subscribe((params) => {
-      this.member.username = params['username']; // Update the username
-      this.imageUrl = null;
-      this.initStack(); // Reinitialize the data
+      this.member.username = params['username'];
+      this.initStack();
     });
   }
 
   initStack(){
-    this.getMember();
-    this.areFriends();
-    this.isfriendRequestSent();
-    this.isFriendRequestReceived();
-    this.getInitialTab();
-  }
+    this.getMember().then((member) => {
+      this.member = member
 
-  getMember(){
-    this.route.data.subscribe({
-      next: (data) => {
-        this.member = data['member'];
-        this.imageUrl = null;
-        this.loadImage();
-      }
+      const currentUsername = this.currentUser!.userName;
+      const memberUsername = this.member.username;
+
+      this.getProfilePhoto(this.currentUser!.profilePhoto).then(img => { this.currentProfilePhoto = img; });
+      this.loadImage(member);
+      this.areFriends(currentUsername, memberUsername);
+      this.isfriendRequestSent(currentUsername, memberUsername);
+      this.isFriendRequestReceived(currentUsername, memberUsername);
+      this.getInitialTab();
     });
   }
 
-  loadImage(){
+  getMember() : Promise<Member>{
+    return new Promise<Member>((resolve, reject) => {
+      this.route.data.subscribe({
+        next: (data) => {
+          const member = data['member'];
+          resolve(member);
+        },
+        error: (err) => {
+          console.log(err.error);
+          reject();
+        }
+      });
+    })
+  }
 
-    this.imageUrl = null;
-    this.photoLoading = true
-    if(this.member.profilePhoto !== null){
-      this.accountService.getSignedUrl(this.member.profilePhoto).subscribe((response) => {
+  loadImage(member: Member){
+
+    this.photoLoaded = false;
+    if(member.profilePhoto !== null){
+      this.accountService.getSignedUrl(member.profilePhoto).subscribe((response) => {
         const objectUrl = response.signedUrl;
-        this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
-        this.photoLoading = false;
+        const img = new Image();
+        img.src = objectUrl;
+
+        img.onload = () => {
+          this.profilePhoto = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+          this.photoLoaded = true;
+        }
+        
       });
     }
   }
 
+  getProfilePhoto(photoId: string): Promise<SafeUrl>{
+    return new Promise<SafeUrl>((resolve, reject) => {
+      this.accountService.getSignedUrl(photoId).subscribe({
+        next: (response) => {
+          const objectUrl = response.signedUrl;
+          const img = new Image();
+          img.src = objectUrl;
+          img.onload = () => {
+            const imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+            resolve(imageUrl);
+          }
+        },
+        error: (err) => {
+          console.log(err.error);
+          reject();
+        }
+      })
+    })
+  }
+
   getInitialTab(){
     this.route.queryParams.subscribe((params) => {
-      var tab = params['tab'] || 'about'; // Default to tab 1 if no query param
+      var tab = params['tab'] || 'about';
       tab = tab.toString();
       this.selectedTab = tab.charAt(0).toUpperCase() + tab.slice(1);
       this.buttons.indexOf(this.selectedTab);
-      this.fetchTabContent(tab);
     });
   }
 
-  fetchTabContent(tabId: string) {
-    this.loading = true;
-    this.error = null;
-    console.log(tabId);
-    switch(tabId){
-      case 'about': {
-        this.getAboutMember();
-        break;
-      }
-
-      case 'interests': {
-        this.getMemberInterests();
-        break;
-      }
-
-      case 'friends': {
-        this.getMemberFriends();
-        break;
-      }
-
-      default: break;
-    }
-  }
-
-  areFriends(){
-    this.friendsService.areFriends(this.currentUser, this.member.username).subscribe({
+  areFriends(currentUser: string, memberUsername: string){
+    this.friendsService.areFriends(currentUser, memberUsername).subscribe({
       next: (response) => {
         this.friends = response.areFriends;
+        this.areFriendsLoaded = true;
       },
-      error: (err) => console.log(err.error)
+      error: (err) => {
+        console.log(err.error)
+        this.areFriendsLoaded = true;
+      }
     });
   }
 
-  isfriendRequestSent(){
-    this.friendsService.isFriendRequestSent(this.currentUser, this.member.username).subscribe({
+  isfriendRequestSent(currentUser: string, memberUsername: string){
+    this.friendsService.isFriendRequestSent(currentUser, memberUsername).subscribe({
       next: (response) => {
         this.friendRequestSent = response.friendRequest;
       },
@@ -149,8 +190,8 @@ export class MemberProfileComponent implements OnInit{
     });
   }
 
-  isFriendRequestReceived(){
-    this.friendsService.isFriendRequestReceived(this.currentUser, this.member.username).subscribe({
+  isFriendRequestReceived(currentUser: string, memberUsername: string){
+    this.friendsService.isFriendRequestReceived(memberUsername, currentUser).subscribe({
       next: (response) => {
         this.friendRequestReceived = response.friendRequest;
       },
@@ -158,8 +199,8 @@ export class MemberProfileComponent implements OnInit{
     });
   }
 
-  sendFriendRequest(){
-    this.friendsService.sendFriendRequest(this.currentUser, this.member.username).subscribe({
+  sendFriendRequest(currentUser: string, memberUsername: string){
+    this.friendsService.sendFriendRequest(currentUser, memberUsername).subscribe({
       next: _ => {
         this.friendRequestSent = true;
       },
@@ -169,43 +210,25 @@ export class MemberProfileComponent implements OnInit{
     })
   }
 
-  answerFriendRequest(){
-    this.friendsService.answerFriendRequest(this.currentUser, this.member.username).subscribe({
-      next: _ => this.friends = true,
+  answerFriendRequest(currentUser: string, memberUsername: string){
+    this.friendsService.answerFriendRequest(currentUser, memberUsername).subscribe({
+      next: _ => {
+        this.friends = true;
+        this.onlineUsersService.newFriend(memberUsername);
+      },
       error: (err) => console.log(err.error)
     });
   }
 
-  getAboutMember(){
-    this.memberService.getAboutMember(this.member.username).subscribe({
+  getMemberInterests(memberUsername: string){
+    this.memberService.getMemberInterests(memberUsername).subscribe({
       next: (response) => {
-        this.aboutMember = response;
-        this.aboutMember.gender = StringProcess.capitalizeFirstLetter(this.aboutMember.gender);
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load the data.';
-        this.loading = false;
-      }
-    });
-  }
-
-  getMemberInterests(){
-    this.memberService.getMemberInterests(this.member.username).subscribe({
-      next: (response) => {
-        console.log(response);
         this.interests = response;
-        this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load the data.';
-        this.loading = false;
+        console.log(err.error);
       }
     })
-  }
-
-  getMemberFriends(){
-    this.loading = false;
   }
 
   selectTab(tab: string) {
@@ -226,7 +249,5 @@ export class MemberProfileComponent implements OnInit{
     });
 
     this.location.replaceState(url.toString());
-
-    this.fetchTabContent(tab);
   }
 }

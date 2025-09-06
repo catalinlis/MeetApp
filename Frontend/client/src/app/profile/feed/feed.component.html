@@ -1,0 +1,26 @@
+<div class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="post-builder">
+                <div *ngIf="!photoLoaded">
+                    <app-loader Cwidth="50" Cheight="50" MarginLeft="20" [circle]="true" [inlineBlock]="true"></app-loader>
+                    <app-loader Cwidth="400" Cheight="50" MarginLeft="15" [inlineBlock]="true"></app-loader>
+                    <app-loader Cwidth="175" Cheight="50" MarginLeft="15" [inlineBlock]="true"></app-loader>
+                </div>
+                <div *ngIf="photoLoaded">
+                    <div class="profile-pic">
+                        <img width="50" height="50" [src]="imageUrl ? imageUrl : 'assets/images/user.png'" style="background-size:auto 100%;" class="profile-pic"  alt="">
+                    </div>
+                    <button mat-button (click)="openPostDialog()" class="write-smth">What's on your mind, {{this.currentUser?.firstname}}?</button>
+                    <button mat-button (click)="openPhotoDialog()" class="add-post-photo"><img src="assets/images/photos-icon.png" width="30px" height="30px"> Photo</button>
+                </div>
+            </div>
+            <ng-container *ngFor="let post of feed">
+                <app-feed-item [feedItem]="post" 
+                               [username]="currentUser!.userName" 
+                               [currentUserProfilePhoto]="imageUrl"
+                               [currentUser]="currentUser"></app-feed-item>
+            </ng-container>
+        </div>
+    </div>
+</div>

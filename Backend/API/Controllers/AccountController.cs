@@ -1,14 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Amazon.S3;
-using Amazon.S3.Model;
-using API.Data;
-using API.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
+using MeetApp.DataEntities.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers;
@@ -26,8 +21,6 @@ public class AccountController(UserManager<AppUser> userManager,
                 return BadRequest(ModelState);
             }
 
-            Console.WriteLine(DateTimeOffset.UtcNow);
-
             var user = new AppUser{
                 Firstname = registerUser.Firstname,
                 Lastname = registerUser.Lastname,
@@ -39,8 +32,6 @@ public class AccountController(UserManager<AppUser> userManager,
                 Gender = registerUser.Gender,
                 RegisterStep = 1
             };
-
-            Console.WriteLine(user.DateOfBirth);
 
             var result = await userManager.CreateAsync(user, registerUser.Password);
 
@@ -64,6 +55,7 @@ public class AccountController(UserManager<AppUser> userManager,
             if(user != null){
                 if(await userManager.CheckPasswordAsync(user, loginUser.Password)){
                     var token = GenerateToken(loginUser.Username);
+
                     return Ok(new {user.Firstname, user.Lastname, user.UserName, user.RegisterStep, user.ProfilePhoto, token});
                 }
             }
@@ -100,24 +92,5 @@ public class AccountController(UserManager<AppUser> userManager,
 
         return token;
      }
-
-    [HttpDelete("delete/{id}")]
-    public async Task<ActionResult> Delete(int id){
-
-        if(ModelState.IsValid){
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if(user == null){
-                ModelState.AddModelError("Id", "There is no such id");
-                return BadRequest(ModelState);
-            }
-
-            await userManager.DeleteAsync(user);
-            return Ok(new {user.Id});
-        }
-
-        return BadRequest(ModelState);
-
-    } 
 
 }

@@ -1,24 +1,31 @@
 <div class="card mb-4" style="height: 240px; cursor: pointer;">
-    <div class="card-img-wrapper">
+    <div class="card-img-wrapper" *ngIf="!photoLoaded">
+        <app-loader Cwidth="145" Cheight="145" [circle]="true"></app-loader>
+    </div>
+    <div class="card-img-wrapper" *ngIf="photoLoaded">
         <img   [src]="imageUrl || './assets/images/user.png'" class="card-img-top">
         <ul class="list-inline member-icons animate text-center">
             <li class="list-inline-item">
-                <button class="btn btn-primary" (click)="redirectProfile()">
+                <a class="btn btn-primary" [routerLink]="'/community/' + member.username">
                     <i class="fa fa-user"></i>
-                </button>
+                </a>
             </li>
             <li class="list-inline-item">
-                <button class="btn btn-primary">
+                <a class="btn btn-primary" [routerLink]="'/messages/' + member.username">
                     <i class="fa fa-envelope"></i>
-                </button>
+                </a>
             </li>
         </ul>
     </div>
-    <div class="card-body p-1">
+    <div class="card-body p-1" *ngIf="!photoLoaded">
+        <app-loader Cwidth="130" Cheight="20" MarginLeft="13" MarginTop="5"></app-loader>
+        <app-loader Cwidth="130" Cheight="15" MarginLeft="13" MarginTop="10"></app-loader>
+    </div>
+    <div class="card-body p-1" *ngIf="photoLoaded">
         <h2 class="card-title text-center mb-1">
             {{member.firstname}} {{member.lastname}}
         </h2>
-        <p class="card-text text-muted text-center">
+        <p class="card-text text-muted text-center" style="font-size: 11pt;">
             {{member.city}}, {{member.country}}
         </p>
     </div>

@@ -257,7 +257,6 @@ export class MessagesPageComponent implements OnInit{
     else{
       this.memberService.getMember(username).subscribe((member) => {
         this.checkUserChat(member);
-        console.log(member);
         this.accountService.getSignedUrl(member.profilePhoto).subscribe({
           next: (response) => {
             const objectUrl = response.signedUrl;

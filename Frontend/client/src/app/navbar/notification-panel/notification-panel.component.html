@@ -1,0 +1,30 @@
+<div class="notification-panel">
+    <div class="panel-header">
+        <button>Notifications</button>
+    </div>
+    <div class="no-notifications" *ngIf="noNotifications">No notifications yet</div>
+    <div class="notification-items">
+        <div class="notification-item" *ngIf="!loadedPhotos">
+            <app-loader Cheight="50" Cwidth="50" [circle]="true" [rgb]="'rgb(230,230,230)'" MarginLeft="10" MarginTop="10" [inlineBlock]="true"></app-loader>
+            <div>
+                <div class="header">
+                    <app-loader Cheight="20" Cwidth="100" [rgb]="'rgb(230,230,230)'" MarginTop="15" MarginLeft="10"></app-loader>
+                </div>
+                <div class="message">
+                    <app-loader Cheight="15" Cwidth="160" [rgb]="'rgb(230,230,230)'" MarginLeft="10" MarginTop="5"></app-loader>
+                </div>
+            </div>
+        </div>
+        <ng-container *ngFor="let notification of notifications">
+            <div class="notification-item">
+                <div class="profile-pic"><img [src]="notification.image" alt=""></div>
+                <div class="content">
+                    <div class="header">{{notification.realtimeNotification.senderFirstname}} {{notification.realtimeNotification.senderLastname}}</div>
+                    <div class="message">{{notification.realtimeNotification.message}}</div>
+                    <div class="time">{{notification.createdAt}}</div>
+                </div>
+                <div class="circle"><fa-icon [icon]="faCircle" class="me-2"></fa-icon></div>
+            </div>
+        </ng-container>
+    </div>
+</div>

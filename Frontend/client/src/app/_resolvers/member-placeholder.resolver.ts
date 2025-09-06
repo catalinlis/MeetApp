@@ -7,7 +7,6 @@ export const memberPlaceholderResolver: ResolveFn<Member | null> = (route, state
   const memberService = inject(MembersService);
 
   const username = route.paramMap.get('username');
-
   if(!username) return null;
 
   return memberService.getMember(username);

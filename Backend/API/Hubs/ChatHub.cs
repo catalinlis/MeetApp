@@ -1,9 +1,12 @@
 using System.Collections.Concurrent;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Hubs;
 
-public class ChatHub : Hub{
+[Authorize]
+public class ChatHub : Hub
+{
 
     private static ConcurrentDictionary<string, string> ActiveUsers = new ConcurrentDictionary<string, string>();
 
@@ -23,9 +26,10 @@ public class ChatHub : Hub{
 
     }
 
-    public async Task SendPrivateMessageToUser(string sender, string receiver, string message){
-        
-        if(ActiveUsers.TryGetValue(receiver, out string? receiverConnection))
+    public async Task SendPrivateMessageToUser(string sender, string receiver, string message)
+    {
+
+        if (ActiveUsers.TryGetValue(receiver, out string? receiverConnection))
             await Clients.Client(receiverConnection!).SendAsync("ReceivePrivateMessage", receiver, sender, message);
     }
 

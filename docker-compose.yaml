@@ -1,26 +1,48 @@
 version: '3.8'
 
 services:
-  backend:
-    image: backend:latest
+  api-backend:
+    build:
+      context: ./Backend
+      dockerfile: API/Dockerfile
     networks:
       - app-network
     ports:
       - "5100:5100"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - REDIS_CONNECTION=redis:6379
+      - RABBITMQ_HOSTNAME=rabbit
     depends_on:
       - redis
+      - rabbit
 
-  frontend:
-    image: frontend:latest
+  notification-service:
+    build:
+      context: ./Backend
+      dockerfile: NotificationService/Dockerfile
     networks:
       - app-network
     ports:
-      - "4200:4200"
+      - "5104:5104"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - REDIS_CONNECTION=redis:6379
+      - RABBITMQ_HOSTNAME=rabbit
     depends_on:
-      - backend
+      - redis
+      - rabbit
+
+  frontend:
+    build:
+      context: ./Frontend/client
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    ports:
+      - "80:80"
+    depends_on:
+      - api-backend
 
   redis:
     image: redis
@@ -28,6 +50,19 @@ services:
       - app-network
     ports:
       - "6379:6379"
+
+  rabbit:
+    image: rabbitmq:4.0-management
+    networks:
+      - app-network
+    ports:
+      - "5672:5672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
 networks:
   app-network:

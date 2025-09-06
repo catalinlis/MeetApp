@@ -4,25 +4,24 @@ import { Member } from '../../../../_models/Member';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AccountService } from '../../../../_services/account.service';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { HttpEventType, HttpHeaders, HttpRequest } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
+
 
 @Component({
   selector: 'app-member-friends',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './member-friends.component.html',
   styleUrl: './member-friends.component.css'
 })
 export class MemberFriendsComponent implements OnInit{
   private friendService = inject(FriendService);
   private accountService = inject(AccountService);
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  @Input() username: string = "";
+  @Input() user!: Member;
   friends : Member[] = [];
   imageUrl: SafeUrl | null = null;
+  loaded: boolean = false;
+
   constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
@@ -30,13 +29,15 @@ export class MemberFriendsComponent implements OnInit{
   }
 
   getFriends(){
-    this.friendService.getUserFriends(this.username).subscribe({
-      next: (response) =>  {this.friends = response.friends.map(friend => ({
-        ...friend,
-        imageLoaded: false,
-        safeImageUrl: null,
-      }));
-      this.loadImages();
+    this.friendService.getUserFriends(this.user.username).subscribe({
+      next: (response) =>  {
+        this.loaded = true
+        this.friends = response.friends.map(friend => ({
+          ...friend,
+          imageLoaded: false,
+          safeImageUrl: null,
+        }));
+        this.loadImages();
     },
       error: (err) => console.log(err)
     });
@@ -59,11 +60,5 @@ export class MemberFriendsComponent implements OnInit{
           }
         });
     }});
-  }
-
-  redirectProfile(username: string){
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/community', username], { replaceUrl: true });
-    });
   }
 }

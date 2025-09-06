@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 
 public class EnvironmentVariables{
@@ -19,7 +18,6 @@ public class EnvironmentVariables{
 
         return null;
     }
-
     public string this[string key] => Get(key);
 
 }

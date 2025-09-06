@@ -4,6 +4,7 @@
     position: fixed;
     color: white;
     height: 65px;
+    z-index: 1000;
 }
 
 .app-name{
@@ -121,6 +122,28 @@
     background-color: #9a75f2;
     border: solid 2px rgb(255,255,255);
     transition: .2s;
+}
+
+.active{
+    background-color: rgba(140,140,250);
+    border: solid 2px rgb(255,255,255);
+    transition: .2s;
+}
+
+.notifications-count{
+    position: absolute;
+    display: flex;
+    justify-content: center;   /* horizontal center */
+    align-items: center;
+    margin-top: -10px;
+    margin-left: 14px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: rgb(250,150,10);
+    font-family: 'Roboto';
+    font-size: 10pt;
+    color: white;
 }
 
 

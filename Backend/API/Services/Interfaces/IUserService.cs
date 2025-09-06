@@ -1,4 +1,4 @@
-using API.DTOs;
+using MeetApp.DataEntities.DTOs;
 
 namespace API.Services.Interfaces;
 

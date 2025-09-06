@@ -1,0 +1,92 @@
+<div class="header">{{data.currentUser.firstname}} {{data.currentUser.lastname}}'s post</div>
+<div class="post">
+    <div class="top-post">
+        <div class="profile-pic">
+            <img width="40" height="40" [src]="data.profilePhoto ? data.profilePhoto : 'assets/images/user.png'" style="background-size:auto 100%;" class="profile-pic"  alt="">
+        </div>
+        <div class="user-header">
+            <a [href]="'/community/' + data.postItem.author" class="name">{{data.currentUser.firstname}} {{data.currentUser.lastname}}</a>
+            <div class="time">{{data.createdAt}}</div>
+        </div>
+        <div class="interests">
+            <ng-container *ngFor="let interest of data.postItem.interests">
+                <a class="interest" [href]="'/interests/' + interest.interestKey"><img src="assets/images/tag.png" width="12" height="12"> {{interest.interestName}}</a>    
+            </ng-container>
+        </div>
+    </div>
+    <div class="description">{{data.postItem.content}}</div>
+    <div class="img-container">
+        <img [src]="data.photo" class="responsive-img">
+    </div>
+    <div class="post-likes-comments" *ngIf="data.postItem.commentsCount > 0 || data.postItem.likesCount > 0">
+        <div class="likes" *ngIf="data.postItem.likesCount > 0">
+            <img src="assets/images/like_count.png" width="20" height="20" alt="">
+            {{data.postItem.likesCount}}
+        </div>
+         <div class="comments" *ngIf="data.postItem.commentsCount > 0">
+            <img src="assets/images/comment.png" width="20" height="20" alt="">
+            {{data.postItem.commentsCount}}
+        </div>
+    </div>
+    <div class="post-like-comment-buttons">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <button [class]="data.isLiked ? 'isLiked' : 'notLiked'" (click)="like()">
+                        <img [src]="data.isLiked ? '/assets/images/like_active.png' : '/assets/images/like_inactive.png' " 
+                             width="20" height="20" style="margin-top: -5px;">
+                        @if(data.isLiked){
+                            Liked
+                        }
+                        @else {
+                            Like
+                        }
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button style="color: rgb(156,156,156);" (click)="focusTextarea()">
+                        <img src="assets/images/comment.png" width="20" height="20" style="margin-top: -5px;"> Comment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="comments-area">
+        <div class="comment-item" *ngIf="loadedComments === false">
+                <app-loader Cheight="40" Cwidth="40" [inlineBlock]="true" [circle]="true"></app-loader>
+                <div class="text">
+                    <app-loader Cheight="15" Cwidth="100" rgb="rgb(200,200,200)"></app-loader>
+                    <app-loader Cheight="15" Cwidth="40" rgb="rgb(200,200,200)"></app-loader>
+                </div>
+        </div>
+        <ng-container *ngFor="let comment of comments">
+            <div class="comment-item">
+                <img [src]="comment.profilePhoto !== null ? comment.profilePhoto : 'assets/images/user.png'" width="40" height="40" alt="">
+                <div class="text">
+                    <a class="comment-text-name" [href]="'/community/' + comment.username">{{comment.firstname}} {{comment.lastname}}</a>
+                    <p class="comment-text-content">{{comment.comment}}</p>
+                </div>
+            </div>
+            <div class="time">{{comment.addedAt}}</div>
+        </ng-container>
+        <div class="no-comments" *ngIf="loadedComments === true && comments.length === 0">
+            <img src="assets/images/no-comments.png" width="100" height="100" alt=""><br/><br/>
+            No comments yet
+        </div>
+    </div>
+    <div class="comments-textarea">
+        <img [src]="data.currentUserProfilePhoto" class="profile-photo" alt="">
+        <textarea matInput 
+                cdkTextareaAutosize 
+                #commentTextarea
+                #autosize="cdkTextareaAutosize" 
+                cdkAutosizeMinRows="2"
+                cdkAutosizeMaxRows="10"
+                [(ngModel)]="commentContent"
+                [placeholder]="'Comment as ' + data.user.firstname + ' '+ data.user.lastname"></textarea>
+        <button class="send" [disabled]="commentContent.length === 0" (click)="addComment()"><img [src]="commentContent.length > 0 ? 'assets/images/send_active.png' : 'assets/images/send_inactive.png'" width="20" height="20"/></button>
+    </div>
+</div>
+<div>
+    <button class="close-button" (click)="onClose()"><fa-icon [icon]="faClose"></fa-icon></button>
+</div>

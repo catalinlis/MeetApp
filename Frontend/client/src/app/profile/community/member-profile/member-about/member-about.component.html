@@ -1,16 +1,31 @@
-<p class="attribute">Firstname</p>
-<p class="value">{{this.aboutMember.firstname}}</p>
-<p class="attribute">Lastname</p>
-<p class="value">{{this.aboutMember.lastname}}</p>
-<p class="attribute">Gender</p>
-<p class="value">
-<fa-icon *ngIf="aboutMember.gender === 'Male'" [icon]="Genders.Male" class="me-2"></fa-icon>
-<fa-icon *ngIf="aboutMember.gender === 'Female'" [icon]="Genders.Female" class="me-2"></fa-icon>{{this.aboutMember.gender}}</p>
-<p class="attribute">E-mail</p>
-<p class="value"><fa-icon [icon]="faMailBulk" class="me-2"></fa-icon>{{this.aboutMember.email}}</p>
-<p class="attribute">Country</p>
-<p class="value">{{this.aboutMember.country}}</p>
-<p class="attribute">City</p>
-<p class="value">{{this.aboutMember.city}}</p>
-<p class="attribute">Date of Birth</p>
-<p class="value"><fa-icon [icon]="faBirthdayCake" class="me-2"></fa-icon>{{this.BirthDay}}</p>
+<div *ngIf="!loaded">
+    <app-loader Cheight="20" Cwidth="220"></app-loader>
+    <app-loader Cheight="20" Cwidth="200"></app-loader>
+    <app-loader Cheight="20" Cwidth="150" MarginTop="20"></app-loader>
+    <app-loader Cheight="20" Cwidth="300"></app-loader>
+    <app-loader Cheight="20" Cwidth="250" MarginTop="20"></app-loader>
+    <app-loader Cheight="20" Cwidth="270"></app-loader>
+    <app-loader Cheight="20" Cwidth="220" MarginTop="20"></app-loader>
+    <app-loader Cheight="20" Cwidth="320"></app-loader>
+    <app-loader Cheight="20" Cwidth="120" MarginTop="20"></app-loader>
+    <app-loader Cheight="20" Cwidth="270"></app-loader>
+    <app-loader Cheight="20" Cwidth="210"></app-loader>
+</div>
+<div *ngIf="loaded">
+    <p class="attribute">Firstname</p>
+    <p class="value">{{this.aboutMember?.firstname}}</p>
+    <p class="attribute">Lastname</p>
+    <p class="value">{{this.aboutMember?.lastname}}</p>
+    <p class="attribute">Gender</p>
+    <p class="value">
+    <fa-icon *ngIf="this.aboutMember?.gender === 'Male'" [icon]="Genders.Male" class="me-2"></fa-icon>
+    <fa-icon *ngIf="this.aboutMember?.gender === 'Female'" [icon]="Genders.Female" class="me-2"></fa-icon>{{this.aboutMember?.gender}}</p>
+    <p class="attribute">E-mail</p>
+    <p class="value"><fa-icon [icon]="faMailBulk" class="me-2"></fa-icon>{{this.aboutMember?.email}}</p>
+    <p class="attribute">Country</p>
+    <p class="value">{{this.aboutMember?.country}}</p>
+    <p class="attribute">City</p>
+    <p class="value">{{this.aboutMember?.city}}</p>
+    <p class="attribute">Date of Birth</p>
+    <p class="value"><fa-icon [icon]="faBirthdayCake" class="me-2"></fa-icon>{{this.BirthDay}}</p>
+</div>

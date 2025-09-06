@@ -41,7 +41,6 @@ export class LoadImageComponent {
 
   onSubmit(event: Event): void{
     event.preventDefault();
-    console.log("test");
     if(!this.selectedFile){
       console.error('No file selected');
       return;
@@ -52,7 +51,6 @@ export class LoadImageComponent {
 
     this.accountService.uploadImage(formData).subscribe({
       next: (response) => {
-        console.log(response);
         this.accountService.updateRegisterStep(response.registerStep);
         this.accountService.updateProfilePhoto(response.profilePhoto);
         this.router.navigateByUrl("register/choose-interest")

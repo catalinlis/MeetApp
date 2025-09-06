@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../../_models/User';
-import { FriendService } from '../friend.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +10,11 @@ import { FriendService } from '../friend.service';
 export class OnlineUsersService {
   private hubConnection!: signalR.HubConnection;
   onlineUsers$ = new BehaviorSubject<string[]>([]);
+  baseUrl = environment.userStatusHubUrl;
 
   startConnection(user: User): Promise<void>{
-    console.log("Start connection");
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5100/userStatusHub", {
+      .withUrl(this.baseUrl, {
         accessTokenFactory: () => user.token
       })
       .withAutomaticReconnect()
@@ -56,7 +56,7 @@ export class OnlineUsersService {
 
   requestOnlineUsers(){
     try{
-      this.hubConnection.invoke("GetOnlineUsers");
+      this.hubConnection.invoke("GetOnlineFriends");
     } catch(err){
       console.log("Error fetching users:", err);
     }
@@ -75,11 +75,18 @@ export class OnlineUsersService {
     return users;
   }
 
+  newFriend(username: string){
+    this.hubConnection.invoke("NewFriend", username);
+    this.onlineUsers$.next([...this.onlineUsers$.value, username]);
+    this.persistOnlineUsers(this.onlineUsers$.value);
+  }
+
   private startHeartbeat(){
+    
     setInterval(() => {
-      this.hubConnection.invoke("Heartbeat")
-        .then(() => console.log("Heartbeat sent!"))
-        .catch(err => console.error("Heartbeat error:", err));
+      if(this.hubConnection.state === signalR.HubConnectionState.Connected){
+        this.hubConnection.invoke("Heartbeat").catch(err => console.error("Heartbeat error:", err));
+      }
     }, 45000);
   }
 }
